@@ -1,0 +1,9 @@
+version: 1
+name: "Bianor"
+description: "Visualization and contextualization of Anomalies."
+
+resource_specs:
+  - name: "sql-warehouse"
+    description: "The SQL warehouse the app uses to query data."
+    sql_warehouse_spec:
+      permission: "CAN_USE"
