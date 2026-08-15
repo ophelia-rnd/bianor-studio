@@ -1,25 +1,217 @@
-import pandas as pd
-from dash import Dash, dcc, html
-import plotly.express as px
+import dash
 import dash_bootstrap_components as dbc
 
-# Initialize the Dash app with Bootstrap styling
-dash_app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+from dash import Dash, dcc, html, Input, Output, State
 
-chart_data = pd.DataFrame({'x': [x for x in range(30)],
-                           'y': [2 ** x for x in range(30)]})
+def load_verify_env():
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    assert os.getenv('DATABRICKS_WAREHOUSE_ID'), "DATABRICKS_WAREHOUSE_ID must be set in environment."
+    assert os.getenv('BIANOR_REPRESENTATION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_REPRESENTATION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
+    assert os.getenv('BIANOR_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
+    assert os.getenv('BIANOR_MAP_REPRESENTATION_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_MAP_REPRESENTATION_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
 
-# Define the app layout
-dash_app.layout = dbc.Container([
-    dbc.Row([dbc.Col(html.H1('Hello world!!!'), width=12)]),
-    dcc.Graph(
-        id='fare-scatter',
-        figure=px.scatter(chart_data, x='x', y='y',
-            labels={'x': 'Apps', 'y': 'Fun with data'},
-            template='simple_white'),
-        style={'height': '500px', 'width': f'{min(100 + 50 * 30, 1000)}px'}
+def setup_app():
+    from databricks.sdk.core import Config
+    app = Dash(
+        __name__,
+        use_pages=True,
+        external_stylesheets=[dbc.themes.PULSE, (
+            "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/"
+            "font/bootstrap-icons.min.css"
+        )],
+        suppress_callback_exceptions=True
     )
-], fluid=True)
+    return "Bianor", Config(), app
 
-if __name__ == '__main__':
-    dash_app.run(debug=True)
+def setup_cache(app):
+    from flask_caching import Cache
+    return Cache(
+        app.server,
+        config={
+            "CACHE_TYPE": "FileSystemCache",
+            "CACHE_DIR": ".bianor_cache",
+            "CACHE_DEFAULT_TIMEOUT": 1200,
+        }
+    )
+
+load_verify_env()
+APP_NAME, cfg, app = setup_app()
+cache = setup_cache(app)
+
+navbar = dbc.Navbar(
+    id="navbar",
+    color=None,
+    children=html.Div(
+        className="d-flex align-items-center",
+        children=[
+            html.Div(
+                id="branding-container",
+                children=[
+                    dbc.Button(
+                        html.I(className="bi bi-layout-sidebar text-white"),
+                        id="btn-sidebar-toggle",
+                        color="link",
+                        className="border-0 text-decoration-none me-1",
+                        n_clicks=0,
+                    ),
+                    html.A(html.Img(src="assets/bianor_branding.png", height="25px"))
+                ],
+            ),
+            html.Div(
+                className="d-flex align-items-center gap-2",
+                children=[
+                    html.Span("/", className="text-white-50", style={"fontSize": ".8rem"}),
+                    dcc.Dropdown(
+                        id="drp-map",
+                        className="dropdown",
+                        options=[],
+                        placeholder="Select Representation...",
+                        optionHeight = 40,
+                        style={"fontSize": ".8rem", "cursor": "pointer", "border": "none"},
+                    ),
+                    html.Span("/", className="text-white-50", style={"fontSize": ".8rem"}),
+                    dcc.Dropdown(
+                        id="drp-prediction",
+                        className="dropdown",
+                        placeholder="Select Predictions...",
+                        optionHeight = 40,
+                        style={"fontSize": ".8rem", "cursor": "pointer", "border": "none"},
+                        disabled=True
+                    )
+                ]
+            )
+        ]
+    )
+)
+
+sidebar = html.Div(
+    id="sidebar",
+    style={},
+    children=[
+        html.Div([
+            dbc.Button(
+                id="btn-create",
+                className="w-100 mb-3 text-start d-flex align-items-center px-2 py-1 text-white",
+                style={"backgroundColor": "rgba(112, 36, 230, 0.15)", "borderRadius": "5px"},
+                n_clicks=0,
+                color=None,
+                size="sm",
+                children=[html.I(className="bi bi-plus-lg fs-5 me-1", style={"color": "#a855f7"}), "New"],
+            ),
+            dbc.Modal(
+                id="mdl-create",
+                is_open=False,
+                children=[
+                    dbc.ModalHeader(dbc.ModalTitle("New Map")),
+                    dbc.ModalBody("Create a new map configuration."),
+                    dbc.ModalFooter(dbc.Button("Close", id="close", className="ms-auto", n_clicks=0))
+                ]
+            ),
+        ]),
+        dbc.Nav(
+            vertical=True,
+            className="small mb-3",
+            children=[
+                dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home",
+                            className="text-white py-1 px-2 mb-1"),
+                dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer",
+                            className="text-white py-1 px-2 mb-1"),
+                dbc.NavLink([html.I(className="bi bi-collection me-2"), "Maps"], href="/maps", id="nav-maps",
+                            className="text-white py-1 px-2 mb-1"),
+            ]
+        )
+    ]
+)
+
+app.layout = html.Div(
+    id="main-container",
+    children=[
+        dcc.Location(id="url", refresh=False),
+        dcc.Store(id="selected_map"),
+        dcc.Store(id="selected_prediction"),
+        navbar,
+        html.Div(
+            id="body-container",
+            children=[sidebar, dash.page_container],
+        )
+    ]
+)
+
+@cache.memoize()
+def fetch_map_configs():
+    from services.map_service import BianorRepresentationConfigService
+    return BianorRepresentationConfigService.list(cfg)
+
+@cache.memoize()
+def fetch_prediction_configs(selected_map_id):
+    from services.map_service import BianorPredictionConfigService
+    return BianorPredictionConfigService.list_by_representation(cfg, representation_id=selected_map_id)
+
+@app.callback(
+    Output("mdl-create", "is_open"),
+    [Input("btn-create", "n_clicks"), Input("close", "n_clicks")],
+    [State("mdl-create", "is_open")],
+) # FIXME
+def __open_create_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+@app.callback(Output("sidebar", "style"),
+    Input("btn-sidebar-toggle", "n_clicks"),
+    State("sidebar", "style")
+)
+def __toggle_sidebar(n_clicks, current_style):
+    if not n_clicks: return current_style
+    is_hidden = current_style.get("display") == "none"
+    current_style["display"] = "block" if is_hidden else "none"
+    return current_style
+
+@app.callback(Output("drp-map", "options"),
+    Input("drp-map", "id"),
+)
+def __update_drp_map_options(_):
+    map_df = fetch_map_configs()
+    options = [{"label": item["NAME"], "value": item["ID"]} for idx, item in map_df.iterrows()]
+    return options
+
+@app.callback(
+    Output("drp-prediction", "options"),
+    Output("drp-prediction", "value"),
+    Output("drp-prediction", "disabled"),
+    Output("drp-prediction", "style"),
+    Input("drp-map", "value"),
+    State("drp-prediction", "style")
+)
+def __update_drp_prediction_options(selected_map_id, current_style):
+    pred_df = fetch_prediction_configs(selected_map_id)
+    options = [{"label": item["NAME"], "value": item["ID"]} for idx, item in pred_df.iterrows()]
+    is_disabled = len(options) == 0
+    current_style["visibility"] = "visible" if not is_disabled else "hidden"
+    return options, None, is_disabled, current_style
+
+@app.callback(
+    Output("selected_map", "data"),
+    Input("drp-map", "value"),
+)
+def __store_selected_map(selected_map_id):
+    if not selected_map_id: return None
+    maps_df = fetch_map_configs()
+    selected_map = maps_df.loc[maps_df["ID"] == selected_map_id].iloc[0].to_dict()
+    return selected_map
+
+@app.callback(
+    Output("selected_prediction", "data"),
+    State("selected_map", "data"),
+    Input("drp-prediction", "value"),
+)
+def __store_selected_prediction(selected_map, selected_pred_id):
+    if not selected_map or not selected_pred_id: return None
+    pred_df = fetch_prediction_configs(selected_map_id=selected_map["ID"])
+    selected_pred = pred_df.loc[pred_df["ID"] == selected_pred_id].iloc[0].to_dict()
+    return selected_pred
+
+if __name__ == "__main__":
+    app.run(debug=True)

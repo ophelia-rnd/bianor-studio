@@ -1,0 +1,107 @@
+#main-container {
+    display: flex;
+    flex-direction: column;
+
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    background-color: #221e2e;
+    color: #E8ECF0;
+
+    #body-container {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+
+        overflow: hidden;
+
+        > div:nth-child(2) {
+            flex-grow: 1;
+
+            height: 100%;
+            overflow: hidden;
+
+            #_pages_content {
+                height: 100%;
+                width: 100%;
+                padding: 6rem 10rem 2rem 10rem;
+
+                background-color: #11171D;
+                border-radius: .5rem 0 0 0;
+            }
+        }
+    }
+}
+
+#sidebar {
+    flex-shrink: 0;
+    padding: .9rem;
+    padding-top: 0;
+}
+
+#navbar {
+    display: block;
+    margin: 0;
+    padding: 0;
+
+    #branding-container {
+        display: flex;
+        align-items: center;
+        padding: 1rem .9rem;
+    }
+
+    .dropdown {
+        width: 300px;
+        color: black;
+    }
+}
+
+#navbar i, #sidebar a {
+    --bs-text-opacity: .75;
+}
+
+#navbar #branding-container, #sidebar {
+    width: 200px;
+    box-sizing: border-box;
+}
+
+#observer-container {
+    display: flex;
+    gap: 2rem;
+    flex: 1;
+
+    overflow: hidden;
+
+    #observer-plot-container {
+        flex: 3;
+    }
+
+    #observer-table-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        #observer-table {
+            overflow-y: auto;
+            flex: 1;
+        }
+    }
+}
+
+.truncated-table {
+    width: 100%;
+
+    font-size: .75rem;
+    cursor: default;
+
+    thead th, tbody td {
+        padding: 0.5rem;
+    }
+
+    tbody td {
+        max-width: 200px;
+    }
+}

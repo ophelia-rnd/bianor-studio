@@ -6,7 +6,7 @@ dash-ag-grid
 flask_caching
 
 pandas
-numpy==2.5.1
+numpy
 scikit-learn==1.5.2
 mlflow
 
