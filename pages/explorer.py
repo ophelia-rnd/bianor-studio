@@ -44,15 +44,30 @@ layout = html.Div(
                         html.H6("Detections", className="mb-3"),
                         dash_table.DataTable(
                             id="observer-table",
-                            style_header={'backgroundColor': 'rgba(30, 30, 30, .3)', 'color': 'white'},
-                            style_data={'backgroundColor': 'rgba(50, 50, 50, .3)', 'color': 'white'},
-                            style_cell={'fontSize': '.75rem'},
-                            style_table={'height': '100%', 'overflowY': 'auto'},
-                            # fixed_rows={'headers': True},
-                            row_selectable="multi",
                             style_as_list_view=True,
+                            row_selectable="multi",
+                            style_header={
+                                'backgroundColor': '#1b1824',
+                                'border': 'none',
+                                'position': 'sticky',
+                                'top': '0',
+                                'zIndex': '1000'
+                            },
+                            style_cell={
+                                'background': 'none',
+                                'color': 'white',
+                                'border': 'none',
+                                'padding': '7px',
+                                'fontSize': '.8rem',
+                            },
+                            style_table={
+                                'backgroundColor': '#221e2e',
+                                'cursor': 'pointer'
+                            },
+                            cell_selectable=False,
+                            column_selectable=False,
                             css=[{"selector": ".dash-spreadsheet", "rule":'max-height: unset;'}],
-                        ),
+                        )
                     ]
                 )
             ]
@@ -112,9 +127,10 @@ def create_base_pond(basin):
 @dash.callback(
     Output('observer-plot-container', 'children'),
     Input("selected_map", "data"),
+    Input("selected_prediction", "data"),
     Input("observer-table", "selected_row_ids")
 )
-def __update_plot(selected_map, selected_row_ids):
+def __update_plot(selected_map, selected_prediction, selected_row_ids):
     if not selected_map: return html.Span("Select a representation to be visualized.", className="text-white-50")
 
     som_model_loc = selected_map.get("SOM_MODEL_LOCATION")
@@ -125,7 +141,7 @@ def __update_plot(selected_map, selected_row_ids):
 
     pond.pad_layer()
 
-    if selected_row_ids and len(selected_row_ids):
+    if selected_prediction and selected_row_ids and len(selected_row_ids):
         X = fetch_features(table=selected_map["FEATURE_TABLE_LOCATION"], ids=selected_row_ids)
         X.set_index("id", drop=True, inplace=True)
         scaler = load_scaler(som_model_loc)
@@ -145,12 +161,24 @@ def __update_plot(selected_map, selected_row_ids):
 @dash.callback(
     Output("observer-table", "data"),
     Output("observer-table", "columns"),
+    Input("selected_map", "data"),
     Input("selected_prediction", "data"),
 )
-def __populate_detection_table(selected_prediction):
-    if not selected_prediction: return [], []
+def __populate_prediction_table(selected_map, selected_prediction):
+    if not selected_map or not selected_prediction: return [], []
     prediction_table_loc = selected_prediction.get("PREDICTION_TABLE_LOCATION")
-    df_predictions = fetch_predictions(prediction_table_loc).rename(columns={"ID": "id"})
-    df_predictions_columns = [{"name": i, "id": i} for i in df_predictions.columns]
-    df_predictions_dict = df_predictions.to_dict('records')
-    return df_predictions_dict, df_predictions_columns
+    df_predictions = fetch_predictions(prediction_table_loc).copy()
+    df_predictions.columns = [c.lower() for c in df_predictions.columns]
+    assert "id" in df_predictions.columns, "Id column is required in prediction table."
+    table_columns = [{"name": str(c).lower().capitalize(), "id": c} for c in df_predictions.columns]
+    table_rows = df_predictions.to_dict('records')
+    return table_rows, table_columns
+
+@dash.callback(
+    Output("observer-table", "selected_row_ids"),
+    Output("observer-table", "selected_rows"),
+    Input("selected_map", "data"),
+    Input("selected_prediction", "data"),
+)
+def __reset_selected_rows(selected_map, selected_prediction):
+    return [], []

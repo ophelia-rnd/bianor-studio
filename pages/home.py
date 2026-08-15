@@ -28,19 +28,19 @@ layout = html.Div(
             style={"marginTop": "2rem"},
             children=[
                 dbc.Button([html.I(className="bi bi-flask-fill me-2"), "About Ophelia R&D"], outline=True, color="danger",
-                           size="lg", href="https://github.com/ophelia-rnd", target="_blank"),
+                           size="md", href="https://github.com/ophelia-rnd", target="_blank"),
                 dbc.Button([html.I(className="bi bi-github me-2"), "Bianor"], outline=True, color="primary",
-                           size="lg", href="https://github.com/ophelia-rnd/bianor", target="_blank"),
+                           size="md", href="https://github.com/ophelia-rnd/bianor", target="_blank"),
                 dbc.Button([html.I(className="bi bi-github me-2"), "Lilypond"], outline=True, color="success",
-                           size="lg", href="https://github.com/ophelia-rnd/lilypond", target="_blank"),
+                           size="md", href="https://github.com/ophelia-rnd/lilypond", target="_blank"),
                 dbc.Button([html.I(className="bi bi-github me-2"), "MiniSom"], outline=True, color="secondary",
-                           size="lg", href="https://github.com/JustGlowing/minisom", target="_blank"),
+                           size="md", href="https://github.com/JustGlowing/minisom", target="_blank"),
                 dbc.Button([html.I(className="bi bi-stack me-2"), "Databricks"], outline=True, color="secondary",
-                           size="lg", href="https://www.databricks.com/", target="_blank"),
+                           size="md", href="https://www.databricks.com/", target="_blank"),
                 dbc.Button([html.I(className="bi bi-linkedin")], outline=True, color="primary",
-                           size="lg", href="https://linkedin.com/company/ophelia-rnd", target="_blank"),
+                           size="md", href="https://linkedin.com/company/ophelia-rnd", target="_blank"),
                 dbc.Button([html.I(className="bi bi-envelope-at")], outline=True, color="primary",
-                           size="lg", href="mailto:matebalogh@ophelia-rnd.dev", target="_blank"),
+                           size="md", href="mailto:matebalogh@ophelia-rnd.dev", target="_blank"),
             ]
         )
     ]

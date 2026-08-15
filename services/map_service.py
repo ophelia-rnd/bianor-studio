@@ -20,6 +20,16 @@ class BianorPredictionConfigService(DataService):
     TABLE_MAP = os.getenv('BIANOR_MAP_REPRESENTATION_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION')
 
     @classmethod
+    def list_maps(cls, cfg):
+        sqls = """
+       SELECT tr.NAME as NAME, t.PREDICTION_TABLE_LOCATION as PREDICTION_TABLE_LOCATION FROM IDENTIFIER(:table) t
+            INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PREDICTIONC_ID
+            INNER JOIN IDENTIFIER(:table_representation) tr ON tr.ID = tm.REPRESENTATIONC_ID;
+       """
+        params = {"table": cls.TABLE, "table_map": cls.TABLE_MAP, "table_representation": BianorRepresentationConfigService.TABLE}
+        return DataService.execute(cfg, sqls, params=params)
+
+    @classmethod
     def list_by_representation(cls, cfg, representation_id):
         sqls = """
         SELECT ID, NAME, PREDICTION_TABLE_LOCATION FROM IDENTIFIER(:table) t

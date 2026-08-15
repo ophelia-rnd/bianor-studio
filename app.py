@@ -90,36 +90,30 @@ sidebar = html.Div(
     id="sidebar",
     style={},
     children=[
-        html.Div([
-            dbc.Button(
-                id="btn-create",
-                className="w-100 mb-3 text-start d-flex align-items-center px-2 py-1 text-white",
-                style={"backgroundColor": "rgba(112, 36, 230, 0.15)", "borderRadius": "5px"},
-                n_clicks=0,
-                color=None,
-                size="sm",
-                children=[html.I(className="bi bi-plus-lg fs-5 me-1", style={"color": "#a855f7"}), "New"],
-            ),
-            dbc.Modal(
-                id="mdl-create",
-                is_open=False,
-                children=[
-                    dbc.ModalHeader(dbc.ModalTitle("New Map")),
-                    dbc.ModalBody("Create a new map configuration."),
-                    dbc.ModalFooter(dbc.Button("Close", id="close", className="ms-auto", n_clicks=0))
-                ]
-            ),
-        ]),
+        dbc.Button(
+            id="btn-create",
+            className="text-start d-flex align-items-center text-white",
+            n_clicks=0,
+            color=None,
+            size="sm",
+            children=[html.I(className="bi bi-plus-lg fs-5 me-1", style={"color": "#a855f7"}), "New"],
+        ),
+        dbc.Modal(
+            id="mdl-create",
+            is_open=False,
+            children=[
+                dbc.ModalHeader(dbc.ModalTitle("New Map")),
+                dbc.ModalBody("Create a new map configuration."),
+                dbc.ModalFooter(dbc.Button("Close", id="close", className="ms-auto", n_clicks=0))
+            ]
+        ),
         dbc.Nav(
             vertical=True,
             className="small mb-3",
             children=[
-                dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home",
-                            className="text-white py-1 px-2 mb-1"),
-                dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer",
-                            className="text-white py-1 px-2 mb-1"),
-                dbc.NavLink([html.I(className="bi bi-collection me-2"), "Maps"], href="/maps", id="nav-maps",
-                            className="text-white py-1 px-2 mb-1"),
+                dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home", active="exact", className="text-white"),
+                dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer", active="exact", className="text-white"),
+                dbc.NavLink([html.I(className="bi bi-collection me-2"), "Maps"], href="/maps", id="nav-maps", active="exact", className="text-white"),
             ]
         )
     ]
@@ -166,7 +160,7 @@ def __open_create_modal(n1, n2, is_open):
 def __toggle_sidebar(n_clicks, current_style):
     if not n_clicks: return current_style
     is_hidden = current_style.get("display") == "none"
-    current_style["display"] = "block" if is_hidden else "none"
+    current_style["display"] = "flex" if is_hidden else "none"
     return current_style
 
 @app.callback(Output("drp-map", "options"),
