@@ -219,3 +219,5 @@ __marimo__/
 
 # Other
 .idea
+.bianor_cache
+.local
