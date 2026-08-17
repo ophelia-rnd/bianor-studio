@@ -13,4 +13,4 @@ mlflow
 databricks-sql-connector
 databricks-sdk
 
-git+https://github.com/ophelia-rnd/lilypond/change-basin
+git+https://github.com/ophelia-rnd/lilypond@change-basin
