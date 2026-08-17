@@ -1,7 +1,7 @@
 import mlflow
 
-from minisom import MiniSom
 from sklearn.base import BaseEstimator, TransformerMixin
+from minisom_representation import SomRepresentation
 
 class ModelService():
 
@@ -11,8 +11,8 @@ class ModelService():
         mlflow.set_registry_uri(registry_uri)
         python_model = mlflow.pyfunc.load_model(model_uri).unwrap_python_model()
 
-        assert hasattr(python_model, "model") and isinstance(python_model.model, MiniSom),\
-            "Attribute `model` of the loaded model is not set or is not a MiniSom instance"
+        assert hasattr(python_model, "model") and isinstance(python_model.model, SomRepresentation),\
+            "Attribute `model` of the loaded model is not set or is not a SomRepresentation instance"
 
         assert (hasattr(python_model, "scaler")
                 and isinstance(python_model.scaler, (TransformerMixin, BaseEstimator))

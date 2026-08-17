@@ -93,8 +93,8 @@ def load_model(model_loc):
 @cache.memoize()
 def load_representation(model_loc):
     model = load_model(model_loc)
-    som = model.model
-    return som
+    som_rep = model.model
+    return som_rep
 
 @cache.memoize()
 def load_scaler(model_loc):
@@ -103,17 +103,15 @@ def load_scaler(model_loc):
     return scaler
 
 @cache.memoize()
-def create_basin(som):
-    basin = Basin.from_som(som, random_seed=42, verbose=False)
-    basin.prepare()
-    return basin
+def create_basin(som_rep):
+    return Basin.from_som_representation(som_rep, random_seed=42, verbose=False)
 
 @cache.memoize()
 def create_base_pond(basin):
     from lilypond.pond_base_style import PondBaseStyle
     modern_style = PondBaseStyle(
         water_colorscale="Teal",
-        rhizome_colorscale="dense",
+        rhizome_colorscale=PondBaseStyle.pond().rhizome_colorscale,
         pad_colorscale="Plasma",
         petal_colorscale="Greys",
         petal_marker_line=dict(width=0),
@@ -122,7 +120,9 @@ def create_base_pond(basin):
     )
     return basin \
         .pond(base_style=modern_style) \
-        .pad_layer(gap="nogap")
+        .rhizome_layer() \
+        .pad_layer(gap="nogap") \
+        .petal_layer()
 
 @dash.callback(
     Output('observer-plot-container', 'children'),
@@ -133,18 +133,16 @@ def create_base_pond(basin):
 def __update_plot(selected_map, selected_prediction, selected_row_ids):
     if not selected_map: return html.Span("Select a representation to be visualized.", className="text-white-50")
 
-    som_model_loc = selected_map.get("SOM_MODEL_LOCATION")
-    som_model = load_representation(som_model_loc)
+    som_rep_model_loc = selected_map.get("SOM_MODEL_LOCATION")
+    som_rep_model = load_representation(som_rep_model_loc)
 
-    basin = create_basin(som_model)
+    basin = create_basin(som_rep_model)
     pond = create_base_pond(basin)
-
-    pond.pad_layer()
 
     if selected_prediction and selected_row_ids and len(selected_row_ids):
         X = fetch_features(table=selected_map["FEATURE_TABLE_LOCATION"], ids=selected_row_ids)
         X.set_index("id", drop=True, inplace=True)
-        scaler = load_scaler(som_model_loc)
+        scaler = load_scaler(som_rep_model_loc)
         pond.attraction_layer(scaler.transform(X))
 
     fig = pond.visualize(show_fig=False, title=None)
