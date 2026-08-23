@@ -105,8 +105,17 @@
 
     overflow: hidden;
 
-    #observer-plot-container {
-        flex: 3;
+    #observer-toolbar {
+        height: 100%;
+        width: fit-content;
+        background: #2b263a;
+        box-sizing: border-box;
+        padding: 10px;
+
+        .btn {
+            font-size: 20px;
+            padding: 0;
+        }
     }
 
     #observer-table-container {

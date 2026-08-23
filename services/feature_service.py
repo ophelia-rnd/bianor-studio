@@ -9,3 +9,12 @@ class FeatureService(DataService):
         sqls = f"SELECT * FROM IDENTIFIER(:table) WHERE array_contains(from_json(:ids, 'ARRAY<INT>'), id)"
         params = {"table": table, "ids": json.dumps(pks)}
         return DataService.execute(cfg, sqls, params=params)
+
+    @classmethod
+    def list_by_join(cls, cfg, table, join_table):
+        sqls = """
+               SELECT t.* FROM IDENTIFIER(:table) t
+                 INNER JOIN IDENTIFIER(:join_table) tj ON t.id = tj.id
+               """
+        params = {"table": table, "join_table": join_table}
+        return DataService.execute(cfg, sqls, params=params)

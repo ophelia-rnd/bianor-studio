@@ -38,3 +38,22 @@ class BianorPredictionConfigService(DataService):
         """
         params = {"table": cls.TABLE, "table_map": cls.TABLE_MAP, "representation_id": representation_id}
         return DataService.execute(cfg, sqls, params=params)
+
+class BianorProjectionLayerConfigService(DataService):
+
+    TABLE = os.getenv('BIANOR_PROJECTION_LAYER_CONFIG_DATABRICKS_TABLE_LOCATION')
+    TABLE_MAP = os.getenv('BIANOR_MAP_REPRESENTATION_PROJECTION_LAYER_CONFIG_DATABRICKS_TABLE_LOCATION')
+
+    @classmethod
+    def list_projections(cls, cfg, representation_id):
+        sqls = """
+               SELECT t.NAME, t.SAMPLES_LOCATION, t.MARKER_CONFIG  \
+               FROM IDENTIFIER(:table) t \
+                        INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PROJECTIONLAYERC_ID \
+                        INNER JOIN IDENTIFIER(:table_representation) tr ON tr.ID = tm.REPRESENTATIONC_ID
+               WHERE tr.ID = :representation_id
+               ORDER BY t.ID; \
+               """
+        params = {"table": cls.TABLE, "table_map": cls.TABLE_MAP,
+                  "table_representation": BianorRepresentationConfigService.TABLE, "representation_id": representation_id}
+        return DataService.execute(cfg, sqls, params=params)
