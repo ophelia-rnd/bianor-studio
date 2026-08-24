@@ -22,7 +22,7 @@ class BianorPredictionConfigService(DataService):
     @classmethod
     def list_maps(cls, cfg):
         sqls = """
-       SELECT tr.NAME as NAME, t.PREDICTION_TABLE_LOCATION as PREDICTION_TABLE_LOCATION FROM IDENTIFIER(:table) t
+       SELECT tr.NAME, t.PREDICTION_TABLE_LOCATION FROM IDENTIFIER(:table) t
             INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PREDICTIONC_ID
             INNER JOIN IDENTIFIER(:table_representation) tr ON tr.ID = tm.REPRESENTATIONC_ID;
        """

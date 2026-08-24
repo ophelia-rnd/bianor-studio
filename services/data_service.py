@@ -6,7 +6,7 @@ from databricks import sql
 class DataService:
 
     @classmethod
-    def execute(cls, cfg, sqls, params={}):
+    def execute(cls, cfg, sqls, params=None):
         data = pd.DataFrame([])
 
         try:

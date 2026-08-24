@@ -206,8 +206,8 @@ layout = html.Div(
 
 @cache.memoize()
 def fetch_predictions(table, limit:int = 100):
-    from services.prediction_service import PredictionService
-    return PredictionService.list(cfg, table, limit=limit)
+    from services.table_service import TableService
+    return TableService.list(cfg, table, limit=limit)
 
 @cache.memoize()
 def fetch_projection_configs(representation_id):

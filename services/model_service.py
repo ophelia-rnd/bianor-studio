@@ -3,7 +3,7 @@ import mlflow
 from sklearn.base import BaseEstimator, TransformerMixin
 from minisom_representation import SomRepresentation
 
-class ModelService():
+class ModelService:
 
     @classmethod
     def load(cls, model_loc, registry_uri="databricks-uc"):
