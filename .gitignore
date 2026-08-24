@@ -217,5 +217,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Databricks
+app.yaml
+
 # Other
 .idea
+.bianor_cache
+.local
