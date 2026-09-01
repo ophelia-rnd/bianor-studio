@@ -8,9 +8,8 @@ def load_verify_env():
     from dotenv import load_dotenv
     load_dotenv()
     assert os.getenv('DATABRICKS_WAREHOUSE_ID'), "DATABRICKS_WAREHOUSE_ID must be set in environment."
-    assert os.getenv('BIANOR_REPRESENTATION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_REPRESENTATION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
-    assert os.getenv('BIANOR_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
-    assert os.getenv('BIANOR_MAP_REPRESENTATION_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_MAP_REPRESENTATION_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
+    assert os.getenv('BIANOR_DATABRICKS_CATALOG'), "BIANOR_DATABRICKS_CATALOG must be set in environment."
+    assert os.getenv('BIANOR_DATABRICKS_SCHEMA'), "BIANOR_DATABRICKS_SCHEMA must be set in environment."
 
 def setup_app():
     from databricks.sdk.core import Config
