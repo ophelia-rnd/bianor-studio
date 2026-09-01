@@ -205,14 +205,14 @@ layout = html.Div(
 
 
 @cache.memoize()
+def fetch_projection_layer_configs(representation_id):
+    from services.map_service import BianorProjectionLayerService
+    return BianorProjectionLayerService.list_by_representation(cfg, representation_id)
+
+@cache.memoize()
 def fetch_predictions(table, limit:int = 100):
     from services.table_service import TableService
     return TableService.list(cfg, table, limit=limit)
-
-@cache.memoize()
-def fetch_projection_configs(representation_id):
-    from services.map_service import BianorProjectionLayerConfigService
-    return BianorProjectionLayerConfigService.list_projections(cfg, representation_id)
 
 @cache.memoize()
 def fetch_features(table, ids):
@@ -399,17 +399,17 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_row_i
         pond.rhizome_layer().pad_layer(gap="nogap").petal_layer()
 
     if view == "projections":
-        projection_configs = fetch_projection_configs(selected_map.get("ID"))
+        projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))
         for i, config_record in projection_configs.iterrows():
-            X = fetch_features_by_join(table=selected_map["FEATURE_TABLE_LOCATION"],
+            X = fetch_features_by_join(table=selected_map["FEATURES_LOCATION"],
                                        join_table=config_record["SAMPLES_LOCATION"])
             X.set_index("id", drop=True, inplace=True)
             scaler = load_scaler(som_rep_model_loc)
             pond.attraction_layer(scaler.transform(X), name=config_record["NAME"],
-                                  marker=json.loads(config_record["MARKER_CONFIG"]))
+                                  marker=json.loads(config_record["MARKER_DICT"]))
 
     if selected_prediction and selected_row_ids and len(selected_row_ids):
-        X = fetch_features(table=selected_map["FEATURE_TABLE_LOCATION"], ids=selected_row_ids)
+        X = fetch_features(table=selected_map["FEATURES_LOCATION"], ids=selected_row_ids)
         X.set_index("id", drop=True, inplace=True)
         scaler = load_scaler(som_rep_model_loc)
         pond.attraction_layer(scaler.transform(X), marker=dict(symbol="x", color="red", size=22))
@@ -433,7 +433,7 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_row_i
 )
 def __populate_prediction_table(selected_map, selected_prediction):
     if not selected_map or not selected_prediction: return [], []
-    prediction_table_loc = selected_prediction.get("PREDICTION_TABLE_LOCATION")
+    prediction_table_loc = selected_prediction.get("PREDICTION_LOCATION")
     df_predictions = fetch_predictions(prediction_table_loc).copy()
     df_predictions.columns = [c.lower() for c in df_predictions.columns]
     assert "id" in df_predictions.columns, "Id column is required in prediction table."

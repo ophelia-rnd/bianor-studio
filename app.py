@@ -55,7 +55,7 @@ navbar = dbc.Navbar(
                         className="border-0 text-decoration-none me-1",
                         n_clicks=0,
                     ),
-                    html.A(html.Img(src="assets/bianor_branding.png", height="25px"))
+                    html.A(html.Img(src="assets/bianor_branding_dark.png", height="25px"))
                 ],
             ),
             html.Div(
@@ -112,7 +112,7 @@ sidebar = html.Div(
             children=[
                 dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home", active="exact", className="text-white"),
                 dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer", active="exact", className="text-white"),
-                dbc.NavLink([html.I(className="bi bi-collection me-2"), "Maps"], href="/maps", id="nav-maps", active="exact", className="text-white"),
+                dbc.NavLink([html.I(className="bi bi-collection me-2"), "Configuration"], href="/configuration", id="nav-maps", active="exact", className="text-white"),
             ]
         )
     ]
@@ -134,13 +134,13 @@ app.layout = html.Div(
 
 @cache.memoize()
 def fetch_map_configs():
-    from services.map_service import BianorRepresentationConfigService
-    return BianorRepresentationConfigService.list(cfg)
+    from services.map_service import BianorRepresentationService
+    return BianorRepresentationService.list(cfg)
 
 @cache.memoize()
 def fetch_prediction_configs(selected_map_id):
-    from services.map_service import BianorPredictionConfigService
-    return BianorPredictionConfigService.list_by_representation(cfg, representation_id=selected_map_id)
+    from services.map_service import BianorPredictionService
+    return BianorPredictionService.list_by_representation(cfg, representation_id=selected_map_id)
 
 @app.callback(
     Output("mdl-create", "is_open"),
