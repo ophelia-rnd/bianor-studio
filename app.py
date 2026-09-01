@@ -56,7 +56,7 @@ navbar = dbc.Navbar(
                         className="border-0 text-decoration-none me-1",
                         n_clicks=0,
                     ),
-                    html.A(html.Img(src="assets/bianor_branding.png", height="25px"))
+                    html.A(html.Img(src="assets/bianor_branding_dark.png", height="25px"))
                 ],
             ),
             html.Div(
