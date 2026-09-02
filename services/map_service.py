@@ -1,59 +1,82 @@
-import os
-
 from services.data_service import DataService
+import constants.table as table_const
 
-class BianorRepresentationConfigService(DataService):
-
-    TABLE = os.getenv('BIANOR_REPRESENTATION_CONFIG_DATABRICKS_TABLE_LOCATION')
+class BianorRepresentationService(DataService):
 
     @classmethod
     def list(cls, cfg):
         sqls = """
-        SELECT ID, NAME, SOM_MODEL_LOCATION, FEATURE_TABLE_LOCATION FROM IDENTIFIER(:table);
-        """
-        params = {"table": cls.TABLE}
-        return DataService.execute(cfg, sqls, params=params)
+            SELECT ID, NAME, SOM_MODEL_LOCATION, FEATURES_LOCATION
+            FROM IDENTIFIER(:table)
+            ORDER BY ID;
+            """
+        params = {"table": super().get_table_path(table_const.TABLE_REPRESENTATION)}
+        return super().execute(cfg, sqls, params=params)
 
-class BianorPredictionConfigService(DataService):
-
-    TABLE = os.getenv('BIANOR_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION')
-    TABLE_MAP = os.getenv('BIANOR_MAP_REPRESENTATION_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION')
+class BianorProjectionLayerService(DataService):
 
     @classmethod
-    def list_maps(cls, cfg):
+    def list_mappings(cls, cfg):
         sqls = """
-       SELECT tr.NAME, t.PREDICTION_TABLE_LOCATION FROM IDENTIFIER(:table) t
-            INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PREDICTIONC_ID
-            INNER JOIN IDENTIFIER(:table_representation) tr ON tr.ID = tm.REPRESENTATIONC_ID;
-       """
-        params = {"table": cls.TABLE, "table_map": cls.TABLE_MAP, "table_representation": BianorRepresentationConfigService.TABLE}
-        return DataService.execute(cfg, sqls, params=params)
+            SELECT tr.NAME AS REPRESENTATION_NAME, t.NAME, t.SAMPLES_LOCATION, t.MARKER_DICT
+            FROM IDENTIFIER(:table) t
+                INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PROJECTION_LAYER_ID
+                INNER JOIN IDENTIFIER(:table_representation) tr ON tr.ID = tm.REPRESENTATION_ID
+            ORDER BY t.ID;
+            """
+        params = {
+            "table": super().get_table_path(table_const.TABLE_PROJECTION_LAYER),
+            "table_map": super().get_table_path(table_const.TABLE_MAP_REPRESENTATION_PROJECTION_LAYER),
+            "table_representation": super().get_table_path(table_const.TABLE_REPRESENTATION)
+        }
+        return super().execute(cfg, sqls, params=params)
 
     @classmethod
     def list_by_representation(cls, cfg, representation_id):
         sqls = """
-        SELECT ID, NAME, PREDICTION_TABLE_LOCATION FROM IDENTIFIER(:table) t
-            INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PREDICTIONC_ID
-            WHERE REPRESENTATIONC_ID = :representation_id;
-        """
-        params = {"table": cls.TABLE, "table_map": cls.TABLE_MAP, "representation_id": representation_id}
-        return DataService.execute(cfg, sqls, params=params)
+            SELECT t.NAME, t.SAMPLES_LOCATION, t.MARKER_DICT
+            FROM IDENTIFIER(:table) t
+                INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PROJECTION_LAYER_ID
+            WHERE tr.ID = :representation_id
+            ORDER BY t.ID;
+            """
+        params = {
+            "table": super().get_table_path(table_const.TABLE_PROJECTION_LAYER),
+            "table_map": super().get_table_path(table_const.TABLE_MAP_REPRESENTATION_PROJECTION_LAYER),
+            "representation_id": representation_id
+        }
+        return super().execute(cfg, sqls, params=params)
 
-class BianorProjectionLayerConfigService(DataService):
-
-    TABLE = os.getenv('BIANOR_PROJECTION_LAYER_CONFIG_DATABRICKS_TABLE_LOCATION')
-    TABLE_MAP = os.getenv('BIANOR_MAP_REPRESENTATION_PROJECTION_LAYER_CONFIG_DATABRICKS_TABLE_LOCATION')
+class BianorPredictionService(DataService):
 
     @classmethod
-    def list_projections(cls, cfg, representation_id):
+    def list_mappings(cls, cfg):
         sqls = """
-               SELECT t.NAME, t.SAMPLES_LOCATION, t.MARKER_CONFIG  \
-               FROM IDENTIFIER(:table) t \
-                        INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PROJECTIONLAYERC_ID \
-                        INNER JOIN IDENTIFIER(:table_representation) tr ON tr.ID = tm.REPRESENTATIONC_ID
-               WHERE tr.ID = :representation_id
-               ORDER BY t.ID; \
-               """
-        params = {"table": cls.TABLE, "table_map": cls.TABLE_MAP,
-                  "table_representation": BianorRepresentationConfigService.TABLE, "representation_id": representation_id}
-        return DataService.execute(cfg, sqls, params=params)
+            SELECT tr.NAME AS REPRESENTATION_NAME, t.NAME, t.PREDICTION_LOCATION
+            FROM IDENTIFIER(:table) t
+                INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PREDICTION_ID
+                INNER JOIN IDENTIFIER(:table_representation) tr ON tr.ID = tm.REPRESENTATION_ID
+            ORDER BY t.ID;
+            """
+        params = {
+            "table": super().get_table_path(table_const.TABLE_PREDICTION),
+            "table_map": super().get_table_path(table_const.TABLE_MAP_REPRESENTATION_PREDICTION),
+            "table_representation": super().get_table_path(table_const.TABLE_REPRESENTATION)
+        }
+        return super().execute(cfg, sqls, params=params)
+
+    @classmethod
+    def list_by_representation(cls, cfg, representation_id):
+        sqls = """
+        SELECT ID, NAME, PREDICTION_LOCATION
+        FROM IDENTIFIER(:table) t
+            INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PREDICTION_ID
+        WHERE REPRESENTATION_ID = :representation_id
+        ORDER BY t.ID;
+        """
+        params = {
+            "table": super().get_table_path(table_const.TABLE_PREDICTION),
+            "table_map": super().get_table_path(table_const.TABLE_MAP_REPRESENTATION_PREDICTION),
+            "representation_id": representation_id
+        }
+        return super().execute(cfg, sqls, params=params)

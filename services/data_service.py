@@ -5,6 +5,13 @@ from databricks import sql
 
 class DataService:
 
+    CATALOG = os.getenv('BIANOR_DATABRICKS_CATALOG')
+    SCHEMA = os.getenv('BIANOR_DATABRICKS_SCHEMA')
+
+    @classmethod
+    def get_table_path(cls, table_name):
+        return f"{cls.CATALOG}.{cls.SCHEMA}.{table_name}"
+
     @classmethod
     def execute(cls, cfg, sqls, params=None):
         data = pd.DataFrame([])

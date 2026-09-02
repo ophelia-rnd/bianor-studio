@@ -8,9 +8,8 @@ def load_verify_env():
     from dotenv import load_dotenv
     load_dotenv()
     assert os.getenv('DATABRICKS_WAREHOUSE_ID'), "DATABRICKS_WAREHOUSE_ID must be set in environment."
-    assert os.getenv('BIANOR_REPRESENTATION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_REPRESENTATION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
-    assert os.getenv('BIANOR_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
-    assert os.getenv('BIANOR_MAP_REPRESENTATION_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION'), "BIANOR_MAP_REPRESENTATION_PREDICTION_CONFIG_DATABRICKS_TABLE_LOCATION must be set in environment."
+    assert os.getenv('BIANOR_DATABRICKS_CATALOG'), "BIANOR_DATABRICKS_CATALOG must be set in environment."
+    assert os.getenv('BIANOR_DATABRICKS_SCHEMA'), "BIANOR_DATABRICKS_SCHEMA must be set in environment."
 
 def setup_app():
     from databricks.sdk.core import Config
@@ -113,7 +112,7 @@ sidebar = html.Div(
             children=[
                 dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home", active="exact", className="text-white"),
                 dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer", active="exact", className="text-white"),
-                dbc.NavLink([html.I(className="bi bi-collection me-2"), "Maps"], href="/maps", id="nav-maps", active="exact", className="text-white"),
+                dbc.NavLink([html.I(className="bi bi-collection me-2"), "Configuration"], href="/configuration", id="nav-maps", active="exact", className="text-white"),
             ]
         )
     ]
@@ -135,13 +134,13 @@ app.layout = html.Div(
 
 @cache.memoize()
 def fetch_map_configs():
-    from services.map_service import BianorRepresentationConfigService
-    return BianorRepresentationConfigService.list(cfg)
+    from services.map_service import BianorRepresentationService
+    return BianorRepresentationService.list(cfg)
 
 @cache.memoize()
 def fetch_prediction_configs(selected_map_id):
-    from services.map_service import BianorPredictionConfigService
-    return BianorPredictionConfigService.list_by_representation(cfg, representation_id=selected_map_id)
+    from services.map_service import BianorPredictionService
+    return BianorPredictionService.list_by_representation(cfg, representation_id=selected_map_id)
 
 @app.callback(
     Output("mdl-create", "is_open"),
