@@ -37,6 +37,7 @@ def setup_cache(app):
 
 load_verify_env()
 APP_NAME, cfg, app = setup_app()
+server = app.server
 cache = setup_cache(app)
 
 navbar = dbc.Navbar(
