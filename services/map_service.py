@@ -37,7 +37,7 @@ class BianorProjectionLayerService(DataService):
             SELECT t.NAME, t.SAMPLES_LOCATION, t.MARKER_DICT
             FROM IDENTIFIER(:table) t
                 INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PROJECTION_LAYER_ID
-            WHERE tr.ID = :representation_id
+            WHERE tm.REPRESENTATION_ID = :representation_id
             ORDER BY t.ID;
             """
         params = {
@@ -68,10 +68,10 @@ class BianorPredictionService(DataService):
     @classmethod
     def list_by_representation(cls, cfg, representation_id):
         sqls = """
-        SELECT ID, NAME, PREDICTION_LOCATION
+        SELECT t.ID, t.NAME, t.PREDICTION_LOCATION
         FROM IDENTIFIER(:table) t
             INNER JOIN IDENTIFIER(:table_map) tm ON t.ID = tm.PREDICTION_ID
-        WHERE REPRESENTATION_ID = :representation_id
+        WHERE tm.REPRESENTATION_ID = :representation_id
         ORDER BY t.ID;
         """
         params = {
