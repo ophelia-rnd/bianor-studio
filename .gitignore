@@ -222,5 +222,6 @@ app.yaml
 
 # Other
 .idea
+.DS_Store
 .bianor_cache
 .local
