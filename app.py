@@ -1,7 +1,8 @@
 import dash
 import dash_bootstrap_components as dbc
 
-from dash import Dash, dcc, html, Input, Output, State
+from dash import Dash, dcc, html, Input, Output, State, ALL
+from registry import registry
 
 def load_verify_env():
     import os
@@ -40,98 +41,136 @@ APP_NAME, cfg, app = setup_app()
 server = app.server
 cache = setup_cache(app)
 
-navbar = dbc.Navbar(
-    id="navbar",
-    color=None,
-    children=html.Div(
-        className="d-flex align-items-center",
+
+def serve_layout():
+    navbar = dbc.Navbar(
+        id="navbar",
+        color=None,
+        style={"marginBottom": "1rem"},
+        children=html.Div(
+            className="d-flex align-items-center w-100",
+            children=[
+                html.Div(
+                    id="branding-container",
+                    className="d-flex align-items-center",
+                    children=[
+                        dbc.Button(
+                            html.I(className="bi bi-layout-sidebar text-white"),
+                            id="btn-sidebar-toggle",
+                            style={"marginTop": ".4rem"},
+                            color="link",
+                            className="border-0 text-decoration-none me-1",
+                            n_clicks=0,
+                        ),
+                        html.Div(
+                            className="d-flex flex-column align-items-end",
+                            style={"marginRight": "20px"},
+                            children=[
+                                html.A(html.Img(src="assets/bianor_branding_dark.png", height="25px")),
+                                html.Div(
+                                    registry.edition_badge_func(),
+                                    style={"height": "0px", "marginTop": "-.5rem"} 
+                                )
+                            ]
+                        )
+                    ],
+                ),
+                html.Div(
+                    className="d-flex align-items-center flex-grow-1",
+                    style={"marginTop": ".9rem"},
+                    children=[
+                        html.Div(
+                            className="d-flex align-items-center gap-2",
+                            children=[
+                                html.Span("/", className="text-white-50", style={"fontSize": ".8rem"}),
+                                dcc.Dropdown(
+                                    id="drp-map",
+                                    className="dropdown",
+                                    options=[],
+                                    placeholder="Select Representation...",
+                                    optionHeight = 40,
+                                    style={"fontSize": ".8rem", "cursor": "pointer", "border": "none"},
+                                ),
+                                html.Span("/", className="text-white-50", style={"fontSize": ".8rem"}),
+                                dcc.Dropdown(
+                                    id="drp-prediction",
+                                    className="dropdown",
+                                    placeholder="Select Predictions...",
+                                    optionHeight = 40,
+                                    style={"fontSize": ".8rem", "cursor": "pointer", "border": "none"},
+                                    disabled=True
+                                )
+                            ]
+                        ),
+                        registry.navbar_cta()
+                    ]
+                )
+            ]
+        )
+    )
+
+    sidebar = html.Div(
+        id="sidebar",
+        style={},
         children=[
-            html.Div(
-                id="branding-container",
-                children=[
-                    dbc.Button(
-                        html.I(className="bi bi-layout-sidebar text-white"),
-                        id="btn-sidebar-toggle",
-                        color="link",
-                        className="border-0 text-decoration-none me-1",
-                        n_clicks=0,
-                    ),
-                    html.A(html.Img(src="assets/bianor_branding_dark.png", height="25px"))
-                ],
+            dbc.Button(
+                id="btn-create",
+                className="text-start d-flex align-items-center text-white",
+                n_clicks=0,
+                color=None,
+                size="sm",
+                children=[html.I(className="bi bi-plus-lg fs-5 me-1", style={"color": "#a855f7"}), "New"],
             ),
-            html.Div(
-                className="d-flex align-items-center gap-2",
+            dbc.Modal(
+                id="mdl-create",
+                is_open=False,
                 children=[
-                    html.Span("/", className="text-white-50", style={"fontSize": ".8rem"}),
-                    dcc.Dropdown(
-                        id="drp-map",
-                        className="dropdown",
-                        options=[],
-                        placeholder="Select Representation...",
-                        optionHeight = 40,
-                        style={"fontSize": ".8rem", "cursor": "pointer", "border": "none"},
-                    ),
-                    html.Span("/", className="text-white-50", style={"fontSize": ".8rem"}),
-                    dcc.Dropdown(
-                        id="drp-prediction",
-                        className="dropdown",
-                        placeholder="Select Predictions...",
-                        optionHeight = 40,
-                        style={"fontSize": ".8rem", "cursor": "pointer", "border": "none"},
-                        disabled=True
-                    )
+                    dbc.ModalHeader(dbc.ModalTitle("New Representation")),
+                    dbc.ModalBody([
+                        "In order to populate your Bianor application with additional models and layers, use the ",
+                        html.A("bianor-databricks-kit", href="https://github.com/ophelia-rnd/bianor-databricks-kit", target="_blank"),
+                        " toolkit."
+                    ]),
+                    dbc.ModalFooter([
+                        html.Span(
+                            html.A("More about Bianor", href="https://bianor.ophelia-rnd.dev", target="_blank"),
+                            className="me-auto small text-muted"
+                        ),
+                        dbc.Button("Close", id="close", className="ms-auto", n_clicks=0)
+                    ])
+                ]
+            ),
+            registry.premium_modal(),
+            dbc.Nav(
+                vertical=True,
+                className="small mb-3",
+                children=[
+                    dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home", active="exact", className="text-white"),
+                    dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer", active="exact", className="text-white"),
+                    dbc.NavLink([html.I(className="bi bi-collection me-2"), "Configuration"], href="/configuration", id="nav-maps", active="exact", className="text-white"),
+                    dbc.NavLink([html.I(className="bi bi-info-circle me-2"), "About"], href="/about", id="nav-about", active="exact", className="text-white"),
                 ]
             )
         ]
     )
-)
 
-sidebar = html.Div(
-    id="sidebar",
-    style={},
-    children=[
-        dbc.Button(
-            id="btn-create",
-            className="text-start d-flex align-items-center text-white",
-            n_clicks=0,
-            color=None,
-            size="sm",
-            children=[html.I(className="bi bi-plus-lg fs-5 me-1", style={"color": "#a855f7"}), "New"],
-        ),
-        dbc.Modal(
-            id="mdl-create",
-            is_open=False,
-            children=[
-                dbc.ModalHeader(dbc.ModalTitle("New Map")),
-                dbc.ModalBody("Create a new map configuration."),
-                dbc.ModalFooter(dbc.Button("Close", id="close", className="ms-auto", n_clicks=0))
-            ]
-        ),
-        dbc.Nav(
-            vertical=True,
-            className="small mb-3",
-            children=[
-                dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home", active="exact", className="text-white"),
-                dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer", active="exact", className="text-white"),
-                dbc.NavLink([html.I(className="bi bi-collection me-2"), "Configuration"], href="/configuration", id="nav-maps", active="exact", className="text-white"),
-            ]
-        )
-    ]
-)
+    return html.Div(
+        id="main-container",
+        className="d-flex flex-column min-vh-100",
+        children=[
+            dcc.Location(id="url", refresh=False),
+            dcc.Store(id="selected_map"),
+            dcc.Store(id="selected_prediction"),
+            navbar,
+            html.Div(
+                id="body-container",
+                className="d-flex flex-grow-1",
+                children=[sidebar, dash.page_container],
+            )
+        ]
+    )
 
-app.layout = html.Div(
-    id="main-container",
-    children=[
-        dcc.Location(id="url", refresh=False),
-        dcc.Store(id="selected_map"),
-        dcc.Store(id="selected_prediction"),
-        navbar,
-        html.Div(
-            id="body-container",
-            children=[sidebar, dash.page_container],
-        )
-    ]
-)
+app.layout = serve_layout
 
 @cache.memoize()
 def fetch_map_configs():
@@ -151,6 +190,24 @@ def fetch_prediction_configs(selected_map_id):
 def __open_create_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
+    return is_open
+
+@app.callback(
+    Output("mdl-premium", "is_open"),
+    [
+        Input({"type": "open-premium-modal", "index": ALL}, "n_clicks"),
+    ],
+    [State("mdl-premium", "is_open")],
+    prevent_initial_call=True,
+)
+def __toggle_premium_modal(cta_clicks, is_open):
+    if not dash.ctx.triggered:
+        return is_open
+    for trigger in dash.ctx.triggered:
+        prop_id = trigger.get("prop_id", "")
+        value = trigger.get("value")
+        if "open-premium-modal" in prop_id and value:
+            return True
     return is_open
 
 @app.callback(Output("sidebar", "style"),

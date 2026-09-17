@@ -68,24 +68,14 @@ def create_datatable(elem_id:str):
 layout = html.Div(
     children=[
         html.H3("Configuration", className="mb-4"),
-        dcc.Markdown(f"Browse previously created map configurations.", style={"marginBottom": "2rem"}),
 
         html.H4("Representations", className="mb-3"),
-        dcc.Markdown(f"Representation configurations are loaded from and can be managed "
-                     f"in the `{table_const.TABLE_REPRESENTATION}` database table."),
         create_datatable("tbl-representation"),
 
         html.H4("Projection Layers", className="mb-3", style={"marginTop": "2rem"}),
-        dcc.Markdown(
-            f"Projection layer configurations are loaded from and can be managed "
-            f"in the `{table_const.TABLE_PROJECTION_LAYER}` "
-            f"and `{table_const.TABLE_MAP_REPRESENTATION_PROJECTION_LAYER}` database tables."),
         create_datatable("tbl-projection"),
 
         html.H4("Predictions", className="mb-3", style={"marginTop": "2rem"}),
-        dcc.Markdown(f"Prediction configurations are loaded from and can be managed "
-             f"in the `{table_const.TABLE_PREDICTION}` "
-             f"and `{table_const.TABLE_MAP_REPRESENTATION_PREDICTION}` database tables."),
         create_datatable("tbl-prediction"),
     ]
 )

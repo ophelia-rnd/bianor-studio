@@ -13,9 +13,7 @@ dash.register_page(
 title_header = "Welcome to Bianor"
 taglines = [
     "Bianor fuses **data visualization** and **contextualization** with **anomaly detection**.",
-    ("In Bianor, `MiniSom` and `SomRepresentation` models are visualized via `lilypond`, a tool that provides enhanced _Self-Organizing Map (SOM)_ displays. "
-     "Additionally, pre-configured historical patterns and points of interest such as **class distributions** and **anomalies** are projected onto the representations. "
-     "All representations, historical pattern layers, anomaly detectors source from your _Databricks_ catalog. ")
+    "Visualize enhanced Self-Organizing Maps (SOM), project historical patterns, and identify points of interest like anomalies directly from your Databricks catalog."
 ]
 
 layout = html.Div(
@@ -27,28 +25,14 @@ layout = html.Div(
             className="d-flex gap-3",
             style={"marginTop": "2rem", "flex-wrap": "wrap"},
             children=[
-                dbc.Button([html.I(className="bi bi-newspaper me-2"), "About Bianor"], outline=True, color="secondary",
-                           size="md", href="https://bianor.ophelia-rnd.dev", target="_blank"),
-                dbc.Button([html.I(className="bi bi-flask-fill me-2"), "About Ophelia R&D"], outline=True, color="primary",
-                           size="md", href="https://github.com/ophelia-rnd", target="_blank"),
-                dbc.Button([html.I(className="bi bi-linkedin")], outline=True, color="info",
-                           size="md", href="https://linkedin.com/company/ophelia-rnd", target="_blank"),
-                dbc.Button([html.I(className="bi bi-envelope-at")], outline=True, color="info",
-                           size="md", href="mailto:matebalogh@ophelia-rnd.dev", target="_blank"),
-            ]
-        ),
-        html.Div(
-            className="d-flex gap-3",
-            style={"marginTop": "1.25rem", "flex-wrap": "wrap"},
-            children=[
-                dbc.Button([html.I(className="bi bi-github me-2"), "Bianor"], outline=True, color="secondary",
+                dbc.Button([html.I(className="bi bi-map me-2"), "Explore Bianor"], color="primary",
+                           size="md", href="/explorer"),
+                dbc.Button([html.I(className="bi bi-github me-2"), "Install in Databricks"], outline=True, color="danger",
                            size="md", href="https://github.com/ophelia-rnd/bianor-databricks", target="_blank"),
-                dbc.Button([html.I(className="bi bi-github me-2"), "Lilypond"], outline=True, color="success",
-                           size="md", href="https://github.com/ophelia-rnd/lilypond", target="_blank"),
-                dbc.Button([html.I(className="bi bi-github me-2"), "SomRepresentation"], outline=True, color="light",
-                           size="md", href="https://github.com/ophelia-rnd/minisom-representation", target="_blank"),
-                dbc.Button([html.I(className="bi bi-github me-2"), "MiniSom"], outline=True, color="light",
-                           size="md", href="https://github.com/JustGlowing/minisom", target="_blank"),
+                dbc.Button([html.I(className="bi bi-box-arrow-up-right me-2"), "About Bianor"], outline=True, color="secondary",
+                           size="md", href="https://bianor.ophelia-rnd.dev", target="_blank"),
+                dbc.Button([html.I(className="bi bi-linkedin me-2"), "Team behind Bianor"], outline=True, color="info",
+                           size="md", href="https://linkedin.com/company/ophelia-rnd", target="_blank"),
             ]
         )
     ]
