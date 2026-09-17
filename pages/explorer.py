@@ -5,6 +5,7 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html, Input, Output, State, dash_table
 from lilypond.basin import Basin
 from utils.figure_style import style_figure
+from registry import registry
 
 dash.register_page(
     __name__,
@@ -48,7 +49,7 @@ def create_plot_config():
     return plot_config
 
 
-layout = html.Div(
+layout = lambda: html.Div(
     className="d-flex flex-column h-100 overflow-hidden", style={"margin": "-4.5rem 0 0 -9rem"},
     children=[
         dcc.Store(id="plot_config", data=create_plot_config()),
@@ -92,15 +93,8 @@ layout = html.Div(
                                             size="sm",
                                             children=[html.I(className="bi bi-clock-history fs-5 me-1"),
                                                       "Historical Patterns"],
-                                        ),
-                                        dbc.Button(
-                                            className="d-flex gap-1 align-items-center p-3 py-2 rounded-4 border-0",
-                                            color=None,
-                                            size="sm",
-                                            children=[html.I(className="bi bi-stack fs-5 me-1"), "Components"],
-                                            disabled=True
                                         )
-                                    ]
+                                    ] + registry.extra_view_buttons()
                                 ),
                                 html.Div(style={"height": "100%", "width": "2px", "background": "#37334a",
                                                 "marginLeft": "10px"}),
@@ -113,6 +107,11 @@ layout = html.Div(
                                     size="sm",
                                     children=[html.I(className="bi bi-bezier2 fs-5")],
                                 ),
+                                dbc.Tooltip(
+                                    "Topological connections",
+                                    target="btn-layer-rhizome",
+                                    placement="bottom",
+                                ),
                                 dbc.Button(
                                     id="btn-layer-pad",
                                     n_clicks=0,
@@ -122,6 +121,11 @@ layout = html.Div(
                                     size="sm",
                                     children=[html.I(className="bi bi-leaf-fill fs-5")],
                                 ),
+                                dbc.Tooltip(
+                                    "Neighbor distances",
+                                    target="btn-layer-pad",
+                                    placement="bottom",
+                                ),
                                 dbc.Button(
                                     id="btn-layer-petal",
                                     n_clicks=0,
@@ -130,6 +134,11 @@ layout = html.Div(
                                     color=None,
                                     size="sm",
                                     children=[html.I(className="bi bi-flower1 fs-5")],
+                                ),
+                                dbc.Tooltip(
+                                    "Node activations",
+                                    target="btn-layer-petal",
+                                    placement="bottom",
                                 ),
                             ]
                         ),
@@ -150,6 +159,11 @@ layout = html.Div(
                                             color=None,
                                             children=[html.I(className="bi bi-arrows-angle-contract")],
                                         ),
+                                        dbc.Tooltip(
+                                            "Minimize gaps",
+                                            target="btn-layer-pad-nogap",
+                                            placement="right",
+                                        ),
                                         dbc.Button(
                                             id="btn-layer-rhizome-violationonly",
                                             n_clicks=0,
@@ -157,8 +171,13 @@ layout = html.Div(
                                             style={"--bs-text-opacity": ".5"},
                                             size="sm",
                                             color=None,
-                                            children=[html.I(className="bi bi-bezier2")],
-                                        )
+                                            children=[html.I(className="bi bi-exclamation-triangle-fill")],
+                                        ),
+                                        dbc.Tooltip(
+                                            "Topology violations",
+                                            target="btn-layer-rhizome-violationonly",
+                                            placement="right",
+                                        ),
                                     ]
                                 ),
                                 html.Div(id='observer-plot-container'),
