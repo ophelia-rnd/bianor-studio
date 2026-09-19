@@ -147,7 +147,7 @@ def serve_layout():
                 children=[
                     dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home", active="exact", className="text-white"),
                     dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer", active="exact", className="text-white"),
-                    dbc.NavLink([html.I(className="bi bi-collection me-2"), "Configuration"], href="/configuration", id="nav-maps", active="exact", className="text-white"),
+                    dbc.NavLink([html.I(className="bi bi-collection me-2"), "Catalog"], href="/catalog", id="nav-maps", active="exact", className="text-white"),
                     dbc.NavLink([html.I(className="bi bi-info-circle me-2"), "About"], href="/about", id="nav-about", active="exact", className="text-white"),
                 ]
             )
