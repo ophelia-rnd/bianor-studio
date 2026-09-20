@@ -86,6 +86,7 @@ def serve_layout():
                                 dcc.Dropdown(
                                     id="drp-map",
                                     className="dropdown",
+                                    searchable=False,
                                     options=[],
                                     placeholder="Select Representation...",
                                     optionHeight = 40,
@@ -95,6 +96,7 @@ def serve_layout():
                                 dcc.Dropdown(
                                     id="drp-prediction",
                                     className="dropdown",
+                                    searchable=False,
                                     placeholder="Select Predictions...",
                                     optionHeight = 40,
                                     style={"fontSize": ".8rem", "cursor": "pointer", "border": "none"},
