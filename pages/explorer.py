@@ -213,6 +213,9 @@ layout = lambda: html.Div(
                             },
                             cell_selectable=False,
                             column_selectable=False,
+                            page_action="custom",
+                            page_current=0,
+                            page_size=100,
                             css=[{"selector": ".dash-spreadsheet", "rule": 'max-height: unset;'}],
                         )
                     ]
@@ -229,9 +232,9 @@ def fetch_projection_layer_configs(representation_id):
     return BianorProjectionLayerService.list_by_representation(cfg, representation_id)
 
 @cache.memoize()
-def fetch_predictions(table, limit:int = 100):
+def fetch_predictions(table, limit:int = 100, offset:int = 0):
     from services.table_service import TableService
-    return TableService.list(cfg, table, limit=limit)
+    return TableService.list(cfg, table, limit=limit, offset=offset)
 
 @cache.memoize()
 def fetch_features(table, ids):
@@ -449,11 +452,19 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_row_i
     Output("observer-table", "columns"),
     Input("selected_map", "data"),
     Input("selected_prediction", "data"),
+    Input("observer-table", "page_current"),
+    Input("observer-table", "page_size"),
 )
-def __populate_prediction_table(selected_map, selected_prediction):
+def __populate_prediction_table(selected_map, selected_prediction, page_current, page_size):
     if not selected_map or not selected_prediction: return [], []
     prediction_table_loc = selected_prediction.get("PREDICTION_LOCATION")
-    df_predictions = fetch_predictions(prediction_table_loc).copy()
+    
+    page_current = page_current or 0
+    page_size = page_size or 100
+    
+    df_predictions = fetch_predictions(prediction_table_loc, limit=page_size, offset=page_current*page_size).copy()
+    if df_predictions.empty: return [], []
+    
     df_predictions.columns = [c.lower() for c in df_predictions.columns]
     assert "id" in df_predictions.columns, "Id column is required in prediction table."
     table_columns = [{"name": str(c).lower().capitalize(), "id": c} for c in df_predictions.columns]

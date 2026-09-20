@@ -27,7 +27,7 @@
             #_pages_content {
                 height: 100%;
                 width: 100%;
-                padding: 6rem 10rem 2rem 10rem;
+                padding: 6rem 8rem 2rem 10rem;
 
                 background-color: #11171D;
                 border-radius: .5rem 0 0 0;
@@ -142,6 +142,7 @@
         #observer-table {
             overflow-y: auto;
             flex: 1;
+            min-width: 200px;
         }
     }
 }
