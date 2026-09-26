@@ -29,7 +29,7 @@ def setup_cache(app):
         config={
             "CACHE_TYPE": "FileSystemCache",
             "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": 1200,
+            "CACHE_DEFAULT_TIMEOUT": 480,
         }
     )
 
