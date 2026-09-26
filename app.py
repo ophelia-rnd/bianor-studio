@@ -32,7 +32,7 @@ def setup_cache(app):
         config={
             "CACHE_TYPE": "FileSystemCache",
             "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": 1200,
+            "CACHE_DEFAULT_TIMEOUT": 480,
         }
     )
 
@@ -86,6 +86,7 @@ def serve_layout():
                                 dcc.Dropdown(
                                     id="drp-map",
                                     className="dropdown",
+                                    searchable=False,
                                     options=[],
                                     placeholder="Select Representation...",
                                     optionHeight = 40,
@@ -95,6 +96,7 @@ def serve_layout():
                                 dcc.Dropdown(
                                     id="drp-prediction",
                                     className="dropdown",
+                                    searchable=False,
                                     placeholder="Select Predictions...",
                                     optionHeight = 40,
                                     style={"fontSize": ".8rem", "cursor": "pointer", "border": "none"},
@@ -147,7 +149,7 @@ def serve_layout():
                 children=[
                     dbc.NavLink([html.I(className="bi bi-house-door me-2"), "Home"], href="/", id="nav-home", active="exact", className="text-white"),
                     dbc.NavLink([html.I(className="bi bi-map me-2"), "Explorer"], href="/explorer", id="nav-explorer", active="exact", className="text-white"),
-                    dbc.NavLink([html.I(className="bi bi-collection me-2"), "Configuration"], href="/configuration", id="nav-maps", active="exact", className="text-white"),
+                    dbc.NavLink([html.I(className="bi bi-collection me-2"), "Catalog"], href="/catalog", id="nav-maps", active="exact", className="text-white"),
                     dbc.NavLink([html.I(className="bi bi-info-circle me-2"), "About"], href="/about", id="nav-about", active="exact", className="text-white"),
                 ]
             )

@@ -5,8 +5,8 @@ from dash import dcc, html, Input, Output, dash_table
 
 dash.register_page(
     __name__,
-    path="/configuration",
-    name="Configuration",
+    path="/catalog",
+    name="Catalog",
     icon="bi-collection"
 )
 
@@ -22,7 +22,7 @@ def setup_cache(app):
         config={
             "CACHE_TYPE": "FileSystemCache",
             "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": 1200,
+            "CACHE_DEFAULT_TIMEOUT": 480,
         }
     )
 
@@ -67,7 +67,7 @@ def create_datatable(elem_id:str):
 
 layout = html.Div(
     children=[
-        html.H3("Configuration", className="mb-4"),
+        html.H3("Catalog", className="mb-4"),
 
         html.H4("Representations", className="mb-3"),
         create_datatable("tbl-representation"),

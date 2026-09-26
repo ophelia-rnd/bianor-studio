@@ -1,8 +1,9 @@
 import json
 import dash
 import dash_bootstrap_components as dbc
+import dash_ag_grid as dag
 
-from dash import dcc, html, Input, Output, State, dash_table
+from dash import dcc, html, Input, Output, State
 from lilypond.basin import Basin
 from utils.figure_style import style_figure
 from registry import registry
@@ -28,7 +29,7 @@ def setup_cache(app):
         config={
             "CACHE_TYPE": "FileSystemCache",
             "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": 1200,
+            "CACHE_DEFAULT_TIMEOUT": 480,
         }
     )
 
@@ -58,7 +59,7 @@ layout = lambda: html.Div(
             children=[
                 html.Div(
                     className="d-flex flex-column",
-                    style={"flex-grow": "3", "gap": "2rem"},
+                    style={"flex": "1 1 0", "minWidth": "0", "gap": "2rem"},
                     children=[
                         html.Div(
                             className="d-flex gap-3 rounded rounded-lg text-white mt-3",
@@ -180,40 +181,40 @@ layout = lambda: html.Div(
                                         ),
                                     ]
                                 ),
-                                html.Div(id='observer-plot-container'),
+                                html.Div(id='observer-plot-container', style={"flex": "1 1 0", "minWidth": "0", "height": "100%"}),
                             ]
                         )
                     ]
                 ),
                 html.Div(
                     id='observer-table-container',
+                    style={"display": "none"},
                     children=[
-                        html.H6("Detections", className="mb-3"),
-                        dash_table.DataTable(
+                        html.H6(id="observer-table-title", children="Detections", className="mb-3 text-white fw-semibold"),
+                        dag.AgGrid(
                             id="observer-table",
-                            style_as_list_view=True,
-                            row_selectable="multi",
-                            style_header={
-                                'backgroundColor': '#1b1824',
-                                'border': 'none',
-                                'position': 'sticky',
-                                'top': '0',
-                                'zIndex': '1000'
+                            rowData=[],
+                            columnDefs=[],
+                            dashGridOptions={
+                                "pagination": True,
+                                "paginationPageSize": 25,
+                                "paginationPageSizeSelector": [10, 25, 50, 100],
+                                "rowSelection": "multiple",
+                                "suppressRowClickSelection": False,
+                                "animateRows": True,
+                                "headerHeight": 44,
+                                "rowHeight": 40,
                             },
-                            style_cell={
-                                'background': 'none',
-                                'color': 'white',
-                                'border': 'none',
-                                'padding': '7px',
-                                'fontSize': '.8rem',
+                            defaultColDef={
+                                "sortable": True,
+                                "filter": True,
+                                "resizable": True,
+                                "minWidth": 130,
+                                "flex": 1,
+                                "cellStyle": {"color": "#F1F5F9"},
                             },
-                            style_table={
-                                'backgroundColor': '#221e2e',
-                                'cursor': 'pointer'
-                            },
-                            cell_selectable=False,
-                            column_selectable=False,
-                            css=[{"selector": ".dash-spreadsheet", "rule": 'max-height: unset;'}],
+                            className="ag-theme-alpine-dark",
+                            style={"width": "100%", "height": "100%"},
                         )
                     ]
                 )
@@ -229,9 +230,9 @@ def fetch_projection_layer_configs(representation_id):
     return BianorProjectionLayerService.list_by_representation(cfg, representation_id)
 
 @cache.memoize()
-def fetch_predictions(table, limit:int = 100):
+def fetch_predictions(table, limit:int = 100, offset:int = 0):
     from services.table_service import TableService
-    return TableService.list(cfg, table, limit=limit)
+    return TableService.list(cfg, table, limit=limit, offset=offset)
 
 @cache.memoize()
 def fetch_features(table, ids):
@@ -392,9 +393,9 @@ def __handle_btn_layer(plot_config, _):
     Input("selected_map", "data"),
     Input("selected_prediction", "data"),
     Input("plot_config", "data"),
-    Input("observer-table", "selected_row_ids")
+    Input("observer-table", "selectedRows")
 )
-def __update_plot(selected_map, selected_prediction, plot_config, selected_row_ids):
+def __update_plot(selected_map, selected_prediction, plot_config, selected_rows):
     if not selected_map: return html.Span("Select a representation to be visualized.", className="text-white-50")
 
     view = plot_config.get("view", None)
@@ -427,8 +428,9 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_row_i
             pond.attraction_layer(scaler.transform(X), name=config_record["NAME"],
                                   marker=json.loads(config_record["MARKER_DICT"]))
 
-    if selected_prediction and selected_row_ids and len(selected_row_ids):
-        X = fetch_features(table=selected_map["FEATURES_LOCATION"], ids=selected_row_ids)
+    selected_ids = [row.get("id") for row in (selected_rows or []) if row.get("id") is not None]
+    if selected_prediction and selected_ids:
+        X = fetch_features(table=selected_map["FEATURES_LOCATION"], ids=selected_ids)
         X.set_index("id", drop=True, inplace=True)
         scaler = load_scaler(som_rep_model_loc)
         pond.attraction_layer(scaler.transform(X), marker=dict(symbol="x", color="red", size=22))
@@ -445,26 +447,57 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_row_i
     )
 
 @dash.callback(
-    Output("observer-table", "data"),
-    Output("observer-table", "columns"),
+    Output("observer-table", "rowData"),
+    Output("observer-table", "columnDefs"),
     Input("selected_map", "data"),
     Input("selected_prediction", "data"),
 )
 def __populate_prediction_table(selected_map, selected_prediction):
     if not selected_map or not selected_prediction: return [], []
     prediction_table_loc = selected_prediction.get("PREDICTION_LOCATION")
-    df_predictions = fetch_predictions(prediction_table_loc).copy()
+
+    df_predictions = fetch_predictions(prediction_table_loc, limit=5000, offset=0).copy()
+    if df_predictions.empty: return [], []
+
     df_predictions.columns = [c.lower() for c in df_predictions.columns]
     assert "id" in df_predictions.columns, "Id column is required in prediction table."
-    table_columns = [{"name": str(c).lower().capitalize(), "id": c} for c in df_predictions.columns]
-    table_rows = df_predictions.to_dict('records')
-    return table_rows, table_columns
+    column_defs = [
+        {
+            "headerName": str(c).lower().capitalize(),
+            "field": c,
+            "checkboxSelection": c == "id",
+            "headerCheckboxSelection": c == "id",
+            "minWidth": 150 if c == "id" else 130,
+            "flex": 1,
+        }
+        for c in df_predictions.columns
+    ]
+    row_data = df_predictions.to_dict('records')
+    return row_data, column_defs
 
 @dash.callback(
-    Output("observer-table", "selected_row_ids"),
-    Output("observer-table", "selected_rows"),
+    Output("observer-table", "selectedRows"),
     Input("selected_map", "data"),
     Input("selected_prediction", "data"),
 )
 def __reset_selected_rows(selected_map, selected_prediction):
-    return [], []
+    return []
+
+@dash.callback(
+    Output("observer-table-container", "style"),
+    Output("observer-table-title", "children"),
+    Input("selected_prediction", "data"),
+)
+def __toggle_table_container(selected_prediction):
+    if not selected_prediction:
+        return {"display": "none"}, "Detections"
+    pred_name = selected_prediction.get("NAME", "")
+    title = f"Detections: {pred_name}" if pred_name else "Detections"
+    return {
+        "display": "flex",
+        "flexDirection": "column",
+        "flex": "0 0 520px",
+        "minWidth": "460px",
+        "maxWidth": "650px",
+        "height": "100%",
+    }, title

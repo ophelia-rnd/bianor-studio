@@ -10,7 +10,7 @@ class AppRegistry:
         
         self.navbar_cta = lambda: dbc.Button(
             [
-                html.Span("Get Early Access to "),
+                html.Span("Get "),
                 html.I(className="bi bi-globe-americas mx-1 text-warning"),
                 html.Span("Biome Edition", className="fw-semibold"),
             ],
@@ -25,7 +25,7 @@ class AppRegistry:
             html.I(className="bi bi-lock-fill text-warning me-2"),
             html.Span("Using Community Edition. ", className="text-white-50"),
             dbc.Button([
-                "Sign up for Early Access to Biome Edition"
+                "Contact us about Biome Edition"
             ], id={"type": "open-premium-modal", "index": "about"}, n_clicks=0, color="link", className="text-warning text-decoration-none fw-bold p-0 align-baseline", style={"cursor": "pointer"}),
             html.Span(" to unlock advanced features.", className="text-white-50")
         ], className="mt-3 mb-4 p-3 small rounded", style={"backgroundColor": "rgba(255, 193, 7, 0.1)", "border": "1px solid rgba(255, 193, 7, 0.3)"})
