@@ -6,26 +6,108 @@
 </p>
 
 <h3 align="center">
-Points of interest put in context via two-dimensional representations
+High-dimensional data,<br>
+brought into focus in 2D
 </h3>
 
 ______________________________________________________________________
 
 <p align="center">
     <a href="https://bianor.ophelia-rnd.dev"><b>About Bianor</b></a>
-     •  <a href="https://demo.bianor.ophelia-rnd.dev"><b>Demo</b></a>
-     •  <a href="https://www.linkedin.com/company/ophelia-rnd"><b>The Team behind Bianor</b></a>
+    &nbsp;•&nbsp; <a href="https://demo.bianor.ophelia-rnd.dev"><b>Demo</b></a>
+    &nbsp;•&nbsp; <a href="https://www.linkedin.com/company/ophelia-rnd"><b>The Team behind Bianor</b></a>
 </p>
-
-<p align="center">
-  <a href="https://pypi.org/project/bianor-databricks"><img src="https://img.shields.io/pypi/v/bianor-databricks"/></a>
-</p>
-
 
 ______________________________________________________________________
 
+## Overview
+
+**Bianor** is a Dash-based application designed to run natively inside your Databricks workspace via [Databricks Apps](https://docs.databricks.com/en/dev-tools/databricks-apps/index.html) for interactive data exploration and contextualization.
+
+
+## Setup & Representation Management
+
+The [`bianor-databricks-kit`](https://github.com/ophelia-rnd/bianor-databricks-kit) library is used to set up the Bianor app environment and manage the connection to representations, projection layers, and predictions in your Databricks workspace.
+
+For installation instructions, schema setup, and representation workflows, refer to the [bianor-databricks-kit repository](https://github.com/ophelia-rnd/bianor-databricks-kit).
+
+
+## Databricks App Deployment
+
+1. **Clone the repository**  
+   In your Databricks workspace, navigate to **Workspace** &rarr; **Git Folders** and clone this repository.
+
+2. **Configure `app.yaml`**  
+   Copy the example configuration:
+   ```bash
+   cp app.yaml.example app.yaml
+   ```
+   Set your SQL Warehouse ID and target Catalog / Schema:
+   ```yaml
+   command: [
+     "python",
+     "app.py"
+   ]
+
+   env:
+     - name: "DATABRICKS_WAREHOUSE_ID"
+       valueFrom: "<sql-warehouse-id>"
+
+     - name: "BIANOR_DATABRICKS_CATALOG"
+       value: "<my_catalog>"
+
+     - name: "BIANOR_DATABRICKS_SCHEMA"
+       value: "<my_schema>"
+   ```
+
+3. **Deploy the app**  
+   Navigate to **Apps**, create a new app from the cloned repository, and deploy it.
+
+
+## Local Run
+
+1. **Clone & install dependencies**
+   ```bash
+   git clone https://github.com/org-ophelia-rnd/bianor-databricks.git
+   cd bianor-databricks
+   pip install -r requirements.txt
+   ```
+
+2. **Configure `.env`**  
+   Copy the template:
+   ```bash
+   cp .env.example .env
+   ```
+   Fill in your Databricks connection details:
+   ```ini
+   DATABRICKS_HOST=<workspace-url>
+   DATABRICKS_CLIENT_ID=<client-id>
+   DATABRICKS_CLIENT_SECRET=<client-secret>
+   DATABRICKS_WAREHOUSE_ID=<sql-warehouse-id>
+
+   BIANOR_DATABRICKS_CATALOG=<my_catalog>
+   BIANOR_DATABRICKS_SCHEMA=<my_schema>
+   ```
+
+3. **Start the server**
+   ```bash
+   python app.py
+   ```
+   Open `http://localhost:8050` in your browser.
+
+______________________________________________________________________
+
+<br>
+<br>
+
 <div align="center">
-    <img height="25px" alt="Bianor logo" src="assets/bianor_branding_light.png" />
-       
-    <img height="25px" alt="Ophelia R&D logo" src="assets/ophelia_rnd_logo.png" />
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/footer/bianor_branding_dark.png">
+      <img height="25px" alt="Bianor logo" src="assets/footer/bianor_branding_light.png">
+    </picture>
+    &nbsp;&nbsp;&nbsp;
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/footer/ophelia_rnd_logo_dark.png">
+      <img height="25px" alt="Ophelia R&D logo" src="assets/footer/ophelia_rnd_logo_light.png">
+    </picture>
 </div>
