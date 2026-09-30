@@ -266,17 +266,31 @@ def create_basin(som_rep):
 
 def create_base_pond(basin):
     from lilypond.pond_base_style import PondBaseStyle
-    modern_style = PondBaseStyle(
-        water_colorscale="Teal",
-        rhizome_colorscale=PondBaseStyle.pond().rhizome_colorscale,
-        pad_colorscale="Plasma",
-        petal_colorscale="Greys",
-        petal_marker_line=dict(width=0),
-        petal_marker=dict(symbol="star", opacity=1),
-        petal_halo_marker=None
+    pond_style = PondBaseStyle(
+        water_colorscale=[
+            [0.0, "#040a14"],
+            [1.0, "#164e63"]
+        ],
+        rhizome_colorscale=[
+            [0.0, "#f59e0b"],
+            [1.0, "#facc15"]
+        ],
+        pad_colorscale=[
+            [0.0, "#180633"],
+            [0.35, "#5b0e8c"],
+            [0.65, "#a81b9a"],
+            [0.85, "#e13d6a"],
+            [1.0, "#f97316"]
+        ],
+        petal_colorscale=[
+            [0.0, "#38bdf8"],
+            [1.0, "#bae6fd"]
+        ],
+        petal_marker=dict(symbol="asterisk", opacity=1, size=15),
+        petal_marker_line=dict(width=2),
+        petal_halo_marker=dict(symbol="asterisk", color="black", opacity=.6, line=dict(width=6, color="black"))
     )
-    return basin \
-        .pond(base_style=modern_style)
+    return basin.pond(base_style=pond_style)
 
 
 @dash.callback(
@@ -433,7 +447,8 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_rows)
         X = fetch_features(table=selected_map["FEATURES_LOCATION"], ids=selected_ids)
         X.set_index("id", drop=True, inplace=True)
         scaler = load_scaler(som_rep_model_loc)
-        pond.attraction_layer(scaler.transform(X), marker=dict(symbol="x", color="red", size=22))
+        marker = dict(color="white", size=22, symbol="bowtie")
+        pond.attraction_layer(scaler.transform(X), marker=marker)
 
     fig = pond.visualize(show_fig=False, title=None)
     fig = style_figure(fig)
