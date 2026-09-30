@@ -268,8 +268,8 @@ def create_base_pond(basin):
     from lilypond.pond_base_style import PondBaseStyle
     pond_style = PondBaseStyle(
         water_colorscale=[
-            [0.0, "#040a14"],
-            [1.0, "#164e63"]
+            [0.0, "#351c5e"],
+            [1.0, "#040916"],
         ],
         rhizome_colorscale=[
             [0.0, "#f59e0b"],
