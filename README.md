@@ -15,43 +15,47 @@ ______________________________________________________________________
 <p align="center">
     <a href="https://bianor.ophelia-rnd.dev"><b>About Bianor</b></a>
     &nbsp;•&nbsp; <a href="https://demo.bianor.ophelia-rnd.dev"><b>Demo</b></a>
-    &nbsp;•&nbsp; <a href="https://www.linkedin.com/company/ophelia-rnd"><b>The Team behind Bianor</b></a>
+    &nbsp;•&nbsp; <a href="https://www.linkedin.com/company/ophelia-rnd"><b>Team behind Bianor</b></a>
 </p>
 
 ______________________________________________________________________
 
+## About
+
+**Bianor** is an installable **Databricks App** designed for interactive exploration and contextualization of the data and models residing in your workspace.
+
 ## Overview
 
-**Bianor** is an installable **Databricks App** designed to run natively inside your workspace for interactive data exploration and contextualization.
+Setting up your Bianor application involves the following steps:
 
+1. **Environment Setup:** Preparing your Bianor environment in Databricks.
+2. **Application Deployment:** Deploy your Bianor app (on Databricks or locally).
+3. **Model Training & Registration:** Training and registering your models to be inspected in Bianor.
 
 ## Getting Started
 
-To get started with Bianor, the overall process involves the following steps:
-
-1. **Environment Setup:** Preparing your Bianor environment in Databricks.
-2. **Application Deployment:** Deploy your Bianor app (natively as a Databricks App or locally).
-3. **Model Training & Registration:** Training and registering your models to be viewed in the app.
-
 ### 1. Environment Setup
 
-The `bianor-databricks-kit` library is used to set up the Bianor app environment and manage the connection to representation models, projection layers, and predictions in your Databricks workspace.
+Use the `bianor-databricks-kit` library to set up the Bianor app environment in your Databricks workspace.
 
 > [!TIP]
 > For instructions refer to the [bianor-databricks-kit repository](https://github.com/ophelia-rnd/bianor-databricks-kit).
-
 
 ### 2. Application Deployment
 
 You can deploy the Bianor application directly in your Databricks workspace or run it locally.
 
-#### Option A: Databricks App (Recommended)
+#### Databricks App (Recommended)
 
 1. **Clone the repository**  
    In your Databricks workspace, clone this repository.
 
+   ```bash
+   https://github.com/ophelia-rnd/bianor-databricks.git
+   ```
+
 2. **Configure `app.yaml`**  
-   Copy the example configuration:
+   Copy the example configuration.
    ```bash
    cp app.yaml.example app.yaml
    ```
@@ -77,11 +81,13 @@ You can deploy the Bianor application directly in your Databricks workspace or r
    Navigate to **Databricks Apps**, create a new app from the cloned repository, and deploy it.
 
 
-#### Option B: Local Run
+#### Local Run
 
 1. **Clone & install dependencies**
    ```bash
-   git clone https://github.com/org-ophelia-rnd/bianor-databricks.git
+   git clone https://github.com/ophelia-rnd/bianor-databricks.git
+   ```
+   ```bash
    cd bianor-databricks
    pip install -r requirements.txt
    ```
@@ -111,13 +117,23 @@ You can deploy the Bianor application directly in your Databricks workspace or r
 
 ### 3. Model Training & Registration
 
-Once your environment and app are set up, you can integrate your models. Train a `SomRepresentation` model using the `minisom-representation` library and register it in your Databricks workspace via MLflow. Finally, use the `bianor-databricks-kit` to link the registered model to your Bianor catalog so it can be accessed and visualized in the app.
+Train a `SomRepresentation` model using the `minisom-representation` library and register it in your Databricks workspace via MLflow.
+
+Finally, use the `bianor-databricks-kit` to link a registered model to your Bianor instance, so it can be inspected in the app.
 
 > [!TIP]
 > For instructions refer to the [minisom-representation](https://github.com/ophelia-rnd/minisom-representation) and [bianor-databricks-kit](https://github.com/ophelia-rnd/bianor-databricks-kit) repositories.
 
 > [!NOTE]
-> The trained and registered models are completely independent of the Bianor application itself. They are trained and managed through your standard MLflow lifecycle and are simply linked to the app for interactive exploration.
+> The trained and registered models are completely independent of the Bianor application itself. They are trained and managed through your standard MLflow / Databricks lifecycle and are simply linked to the app for interactive exploration.
+
+
+## Contact
+
+For questions, feedback, or enterprise inquiries:
+- **Partnerships:** Reach out at [hello@ophelia-rnd.dev](mailto:hello@ophelia-rnd.dev)
+- **Issues & Feature Requests:** Open an issue [here](https://github.com/ophelia-rnd/bianor-databricks/issues)
+- Learn more about the [team and mission](https://bianor.ophelia-rnd.dev) behind Bianor or connect on [LinkedIn](https://www.linkedin.com/company/ophelia-rnd)
 
 ______________________________________________________________________
 
