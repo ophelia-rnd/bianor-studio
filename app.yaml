@@ -5,10 +5,10 @@ command: [
 
 env:
   - name: "DATABRICKS_WAREHOUSE_ID"
-    valueFrom: "<sql-warehouse>"
+    valueFrom: "sql-warehouse"
 
   - name: "BIANOR_DATABRICKS_CATALOG"
-    value: "<my_catalog>"
+    value: "workspace"
 
   - name: "BIANOR_DATABRICKS_SCHEMA"
-    value: "<my_schema>"
+    value: "bianor"
