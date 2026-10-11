@@ -54,6 +54,7 @@ Choose the edition that best matches your environment and goals:
 
     * [Prerequisites](individual/setup.md)
     * [Launch Bianor](individual/run.md)
+    * [Modeling & Configuration](individual/modeling.md)
 
 -   :material-domain:{ .lg .middle } __Biome Edition__
 

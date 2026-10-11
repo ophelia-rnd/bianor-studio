@@ -16,7 +16,7 @@ The **Community Edition** is tailored for individual **researchers, data scienti
     | **SQL Warehouse** | An active SQL Warehouse | Needed to serve analytical queries. Will be attached as an App Resource during deployment. |
     | **Target Catalog & Schema** | Designated Unity Catalog schema | Catalog and schema (e.g. `workspace.bianor`) where metadata tables and models will reside. |
     | **App Permissions** | Schema & Warehouse access | The app's Service Principal will require schema read (`SELECT`), model `EXECUTE`, and warehouse `CAN USE` permissions once created. |
-    | **Toolkit** | [`bianor-databricks-kit`](https://github.com/ophelia-rnd/bianor-databricks-kit) | Python library to initialize metadata tables and link models. |
+    | **Toolkit** | [`bianor-databricks-kit`](https://pypi.org/project/bianor-databricks-kit/) | Python library to initialize metadata tables and link models. |
     | **Training Library** | [`minisom-representation`](https://github.com/ophelia-rnd/minisom-representation) | Python library to train `SomRepresentation` models on your data. |
 
 === ":material-laptop: Local Run"

@@ -75,4 +75,4 @@ nav:
   - "Community Edition":
       - Prerequisites: individual/setup.md
       - Launch Bianor: individual/run.md
-      # - Modeling: individual/modeling.md
+      - Modeling & Configuration: individual/modeling.md

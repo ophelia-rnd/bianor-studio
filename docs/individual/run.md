@@ -63,4 +63,4 @@ Choose your deployment mode to configure and launch Bianor.
 
 ## Next Steps
 
-Once your application is running, proceed to **[Modeling](modeling.md)** to train your first representation and link it to Bianor.
+Once your application is running, proceed to **[Modeling & Configuration](modeling.md)** to train your first representation and link it to Bianor.
