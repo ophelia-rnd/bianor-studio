@@ -54,41 +54,6 @@ class AppRegistry:
             ]
         )
 
-        self.extra_view_buttons = lambda: [
-            html.Div(
-                id="components-disabled-wrapper",
-                style={"display": "inline-block"},
-                children=[
-                    dbc.Button(
-                        className="d-flex gap-1 align-items-center p-3 py-2 rounded-4 border-0 text-muted",
-                        style={"opacity": "0.6", "pointerEvents": "none"},
-                        color=None,
-                        size="sm",
-                        disabled=True,
-                        children=[
-                            html.Span(
-                                className="me-1",
-                                style={"position": "relative", "display": "inline-flex"},
-                                children=[
-                                    html.I(className="bi bi-stack fs-5"),
-                                    html.I(className="bi bi-lock-fill text-warning", style={
-                                        "position": "absolute", 
-                                        "bottom": "-2px", 
-                                        "right": "-5px", 
-                                        "fontSize": "0.55rem", 
-                                        "backgroundColor": "#2b263a",
-                                        "borderRadius": "50%",
-                                        "padding": "2px",
-                                        "boxShadow": "0px 1px 3px rgba(0,0,0,0.5)"
-                                    })
-                                ]
-                            ), 
-                            "Components"
-                        ],
-                    ),
-                    dbc.Tooltip("Available in Biome Edition", target="components-disabled-wrapper", placement="bottom")
-                ]
-            )
-        ]
+        self.extra_view_buttons = lambda: []
 
 registry = AppRegistry()
