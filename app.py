@@ -267,4 +267,5 @@ def __store_selected_prediction(selected_map, selected_pred_id):
     return selected_pred
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    debug = os.getenv("DEBUG_MODE", "false").lower() in ("true", "1")
+    app.run(debug=debug)
