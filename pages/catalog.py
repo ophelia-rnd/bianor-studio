@@ -16,13 +16,15 @@ def get_app():
     return Config(), get_app()
 
 def setup_cache(app):
+    import os
     from flask_caching import Cache
+    timeout = int(os.getenv("CACHE_DEFAULT_TIMEOUT", 300))
     return Cache(
         app.server,
         config={
             "CACHE_TYPE": "FileSystemCache",
             "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": 480,
+            "CACHE_DEFAULT_TIMEOUT": timeout,
         }
     )
 

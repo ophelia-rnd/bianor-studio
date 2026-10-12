@@ -1,3 +1,4 @@
+import os
 import dash
 import dash_bootstrap_components as dbc
 
@@ -5,7 +6,6 @@ from dash import Dash, dcc, html, Input, Output, State, ALL
 from registry import registry
 
 def load_verify_env():
-    import os
     from dotenv import load_dotenv
     load_dotenv()
     assert os.getenv('DATABRICKS_WAREHOUSE_ID'), "DATABRICKS_WAREHOUSE_ID must be set in environment."
@@ -27,12 +27,13 @@ def setup_app():
 
 def setup_cache(app):
     from flask_caching import Cache
+    timeout = int(os.getenv("CACHE_DEFAULT_TIMEOUT", 300))
     return Cache(
         app.server,
         config={
             "CACHE_TYPE": "FileSystemCache",
             "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": 480,
+            "CACHE_DEFAULT_TIMEOUT": timeout,
         }
     )
 

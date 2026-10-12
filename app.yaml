@@ -12,3 +12,6 @@ env:
 
   - name: "BIANOR_DATABRICKS_SCHEMA"
     value: "bianor"
+
+  - name: "CACHE_DEFAULT_TIMEOUT"
+    value: "300"
