@@ -77,7 +77,15 @@ layout = lambda: html.Div(
                                             size="sm",
                                             children=[html.I(className="bi bi-clock-history fs-5 me-1"),
                                                       "Historical Patterns"],
-                                        )
+                                        ),
+                                        dbc.Button(
+                                            id="btn-view-components",
+                                            className="d-flex gap-1 align-items-center p-3 py-2 rounded-4 border-0",
+                                            n_clicks=0,
+                                            color=None,
+                                            size="sm",
+                                            children=[html.I(className="bi bi-stack fs-5 me-1"), "Components"],
+                                        ),
                                     ] + registry.extra_view_buttons()
                                 ),
                                 html.Div(style={"height": "100%", "width": "2px", "background": "#37334a",
@@ -120,9 +128,26 @@ layout = lambda: html.Div(
                                     children=[html.I(className="bi bi-flower1 fs-5")],
                                 ),
                                 dbc.Tooltip(
-                                    "Node activations",
+                                    "Training activations",
                                     target="btn-layer-petal",
                                     placement="bottom",
+                                ),
+                                html.Div(
+                                    id="components-selector-container",
+                                    className="align-items-center gap-2 d-none",
+                                    style={"display": "none"},
+                                    children=[
+                                        html.Div(style={"height": "100%", "width": "2px", "background": "#37334a",
+                                                        "marginLeft": "6px", "marginRight": "6px"}),
+                                        html.Span("Component:", className="text-white-50 small fw-semibold text-nowrap"),
+                                        dcc.Dropdown(
+                                            id="drp-component-idx",
+                                            clearable=False,
+                                            searchable=True,
+                                            placeholder="Select component...",
+                                            style={"minWidth": "210px", "maxWidth": "320px", "fontSize": ".85rem", "color": "#111827", "cursor": "pointer"},
+                                        ),
+                                    ]
                                 ),
                             ]
                         ),
@@ -279,13 +304,21 @@ def create_base_pond(basin):
 @dash.callback(
     Output("btn-view-topology", "style"),
     Output("btn-view-projections", "style"),
+    Output("btn-view-components", "style"),
     Input("plot_config", "data"),
 )
 def __update_btn_view_style(current_config):
     view = current_config.get("view", None)
-    active_states = [view == v for v in ["topology", "projections"]]
-    styles = [{"background": "rebeccapurple", "color": "white"} if s else {"background": "none", "color": "grey"} for s
-              in active_states]
+    view_shades = {
+        "topology": "#7c3aed",
+        "projections": "#dc2626",
+        "components": "#ec4899",
+    }
+    buttons = ["topology", "projections", "components"]
+    styles = [
+        {"background": view_shades[b], "color": "white"} if view == b else {"background": "none", "color": "grey"}
+        for b in buttons
+    ]
     return tuple(styles)
 
 @dash.callback(
@@ -324,6 +357,17 @@ def __handle_btn_view(plot_config, _):
 )
 def __handle_btn_view(plot_config, _):
     view = "projections"
+    plot_config.update({"view": view})
+    return plot_config
+
+@dash.callback(
+    Output("plot_config", "data", allow_duplicate=True),
+    State("plot_config", "data"),
+    Input("btn-view-components", "n_clicks"),
+    prevent_initial_call=True
+)
+def __handle_btn_view(plot_config, _):
+    view = "components"
     plot_config.update({"view": view})
     return plot_config
 
@@ -386,16 +430,55 @@ def __handle_btn_layer(plot_config, _):
     return plot_config
 
 @dash.callback(
+    Output("drp-component-idx", "options"),
+    Output("drp-component-idx", "value"),
+    Output("components-selector-container", "style"),
+    Output("components-selector-container", "className"),
+    Input("selected_map", "data"),
+    Input("plot_config", "data"),
+    State("drp-component-idx", "value"),
+)
+def __update_component_selector(selected_map, plot_config, current_component_idx):
+    view = (plot_config or {}).get("view")
+    if not selected_map or view != "components":
+        return [], current_component_idx, {"display": "none"}, "align-items-center gap-2 d-none"
+
+    som_rep_model_loc = selected_map.get("SOM_MODEL_LOCATION")
+    som_rep_model = load_representation(som_rep_model_loc)
+    basin = create_basin(som_rep_model)
+
+    n_components = getattr(basin.som_representation, "component_size_", None)
+    
+    if n_components is None:
+        n_components = 0
+
+    scaler = load_scaler(som_rep_model_loc)
+    feat_names = getattr(scaler, "feature_names_in_", None)
+
+    options = [
+        {
+            "label": f"Feature {i + 1}" + (f": {feat_names[i]}" if feat_names is not None and i < len(feat_names) else ""),
+            "value": i
+        }
+        for i in range(n_components)
+    ]
+
+    val = current_component_idx if (current_component_idx is not None and current_component_idx < n_components) else 0
+    return options, val, {"display": "flex"}, "align-items-center gap-2 d-flex"
+
+@dash.callback(
     Output('observer-plot-container', 'children'),
     Input("selected_map", "data"),
     Input("selected_prediction", "data"),
     Input("plot_config", "data"),
+    Input("drp-component-idx", "value"),
     Input("observer-table", "selectedRows")
 )
-def __update_plot(selected_map, selected_prediction, plot_config, selected_rows):
+def __update_plot(selected_map, selected_prediction, plot_config, selected_component_idx, selected_rows):
     if not selected_map: return html.Span("Select a representation to be visualized.", className="text-white-50")
 
     view = plot_config.get("view", None)
+    comp_idx = selected_component_idx if selected_component_idx is not None else 0
 
     som_rep_model_loc = selected_map.get("SOM_MODEL_LOCATION")
     som_rep_model = load_representation(som_rep_model_loc)
@@ -409,11 +492,17 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_rows)
             pond.rhizome_layer(violations_only=violationonly)
         if plot_config.get("pad_layer_active"):
             nogap = plot_config.get("pad_layer_nogap_active", False)
-            pond.pad_layer(gap=("nogap" if nogap else "auto"))
+            if view == "components":
+                pond.pad_layer(gap=("nogap" if nogap else "auto"), colorscale="RdYlGn", color_by=dict(feature_idx=comp_idx))
+            else:
+                pond.pad_layer(gap=("nogap" if nogap else "auto"))
         if plot_config.get("petal_layer_active"):
             pond.petal_layer()
     else:
-        pond.rhizome_layer().pad_layer(gap="nogap").petal_layer()
+        if view == "components":
+            pond.rhizome_layer().pad_layer(gap="nogap", colorscale="RdYlGn", color_by=dict(feature_idx=comp_idx)).petal_layer()
+        else:
+            pond.rhizome_layer().pad_layer(gap="nogap").petal_layer()
 
     if view == "projections":
         projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))
