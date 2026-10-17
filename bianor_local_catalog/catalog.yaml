@@ -1,0 +1,26 @@
+# bianor_local_catalog/catalog.yaml
+# Run `bianor_local_catalog/notebooks/demo_iris.ipynb` for the demo setup or adjust the below configuration based on your data/models.
+
+representations:
+  - id: 1
+    name: Iris Representation
+    som_model_location: models/iris-som
+    features_location: data/iris_features.csv
+
+projection_layers:
+  - id: 1
+    name: Iris Setosa (Historical, Class 0)
+    samples_location: data/iris_historical_class_0.csv
+    marker_dict: '{"symbol": "circle", "size": 12, "color": "crimson"}'
+    representation_id: 1
+  - id: 2
+    name: Iris (Historical, Unlabeled)
+    samples_location: data/iris_historical_unlabeled.csv
+    marker_dict: '{"symbol": "circle", "size": 12, "color": "white"}'
+    representation_id: 1
+
+predictions:
+  - id: 1
+    name: Iris (Holdout, Ground Truth)
+    prediction_location: data/iris_holdout_ground_truth.csv
+    representation_id: 1

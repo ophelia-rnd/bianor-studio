@@ -220,5 +220,16 @@ __marimo__/
 # Other
 .idea
 .DS_Store
-.bianor_cache
 .local
+
+
+# Bianor application
+# ------------------
+
+.bianor_cache
+
+bianor_local_catalog/data/*
+!bianor_local_catalog/data/.gitkeep
+
+bianor_local_catalog/models/*
+!bianor_local_catalog/models/.gitkeep

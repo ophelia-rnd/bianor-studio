@@ -11,9 +11,10 @@ dash.register_page(
 )
 
 from cache import cache
+from services.backend import is_local
 from databricks.sdk.core import Config
 
-cfg = Config()
+cfg = Config() if not is_local() else None
 
 def create_datatable(elem_id:str):
     return dash_table.DataTable(

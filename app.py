@@ -6,14 +6,20 @@ from dash import Dash, dcc, html, Input, Output, State, ALL
 from registry import registry
 
 def load_verify_env():
-    from dotenv import load_dotenv
-    load_dotenv()
+    import os
+    from services.backend import catalog_path, is_local, local_root
+    if is_local():
+        root = local_root()
+        assert root.is_dir(), f"BIANOR_LOCAL_CATALOG_ROOT does not exist or is not a directory: {root}"
+        path = catalog_path()
+        assert path.is_file(), f"catalog.yaml not found under BIANOR_LOCAL_CATALOG_ROOT: {path}"
+        return
     assert os.getenv('DATABRICKS_WAREHOUSE_ID'), "DATABRICKS_WAREHOUSE_ID must be set in environment."
     assert os.getenv('BIANOR_DATABRICKS_CATALOG'), "BIANOR_DATABRICKS_CATALOG must be set in environment."
     assert os.getenv('BIANOR_DATABRICKS_SCHEMA'), "BIANOR_DATABRICKS_SCHEMA must be set in environment."
 
 def setup_app():
-    from databricks.sdk.core import Config
+    from services.backend import is_local
     app = Dash(
         __name__,
         use_pages=True,
@@ -23,7 +29,8 @@ def setup_app():
         )],
         suppress_callback_exceptions=True
     )
-    return "Bianor", Config(), app
+    cfg = Config() if not is_local() else None
+    return "Bianor", cfg, app
 
 from cache import cache
 

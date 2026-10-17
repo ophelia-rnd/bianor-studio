@@ -1,7 +1,9 @@
 import os
+from pathlib import Path
+
 import pandas as pd
 
-from databricks import sql
+from services.backend import local_root
 
 class DataService:
 
@@ -13,10 +15,32 @@ class DataService:
         return f"{cls.CATALOG}.{cls.SCHEMA}.{table_name}"
 
     @classmethod
+    def resolve_local_table_path(cls, table_name):
+        path = Path(table_name).expanduser()
+        if not path.is_absolute():
+            path = local_root() / path
+        return path.resolve()
+
+    @classmethod
+    def read_local_table(cls, table_name):
+        path = cls.resolve_local_table_path(table_name)
+        assert path.is_file(), f"Local table not found: {path}"
+        suffix = path.suffix.lower()
+        if suffix == ".csv":
+            df = pd.read_csv(path)
+        elif suffix in (".parquet", ".pq"):
+            df = pd.read_parquet(path)
+        else:
+            raise ValueError(f"Unsupported table format '{suffix}' for {path}. Use .csv or .parquet.")
+        df.columns = [c.lower() for c in df.columns]
+        return df
+
+    @classmethod
     def execute(cls, cfg, sqls, params=None):
         data = pd.DataFrame([])
 
         try:
+            from databricks import sql
             with sql.connect(
                     server_hostname=cfg.host,
                     http_path=f"/sql/1.0/warehouses/{os.getenv('DATABRICKS_WAREHOUSE_ID')}",
