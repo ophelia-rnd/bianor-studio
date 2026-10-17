@@ -516,14 +516,18 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_compo
             pond.rhizome_layer().pad_layer(gap="nogap").petal_layer()
 
     if view == "projections":
-        projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))
-        for i, config_record in projection_configs.iterrows():
-            X = fetch_features_by_join(table=selected_map["FEATURES_LOCATION"],
-                                       join_table=config_record["SAMPLES_LOCATION"])
-            X.set_index("id", drop=True, inplace=True)
-            scaler = load_scaler(som_rep_model_loc)
-            pond.attraction_layer(scaler.transform(X), name=config_record["NAME"],
-                                  marker=json.loads(config_record["MARKER_DICT"]))
+        if is_demo_id(selected_map.get("ID")):
+            from utils.demo import apply_demo_projections
+            apply_demo_projections(pond, load_model(som_rep_model_loc), load_scaler(som_rep_model_loc))
+        else:
+            projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))
+            for i, config_record in projection_configs.iterrows():
+                X = fetch_features_by_join(table=selected_map["FEATURES_LOCATION"],
+                                           join_table=config_record["SAMPLES_LOCATION"])
+                X.set_index("id", drop=True, inplace=True)
+                scaler = load_scaler(som_rep_model_loc)
+                pond.attraction_layer(scaler.transform(X), name=config_record["NAME"],
+                                      marker=json.loads(config_record["MARKER_DICT"]))
 
     selected_ids = [row.get("id") for row in (selected_rows or []) if row.get("id") is not None]
     if selected_prediction and selected_ids:

@@ -474,7 +474,9 @@ def __run_quick_demo(training_data):
         .fit_online(X_scaled, num_iteration=epoch)
         
     from services.model_service import DemoPythonModel
-    demo_model = DemoPythonModel(model=som_rep, scaler=scaler)
+    from utils.demo import build_demo_projections
+    demo_projections = build_demo_projections(data, dataset_name)
+    demo_model = DemoPythonModel(model=som_rep, scaler=scaler, projections=demo_projections)
     
     model_loc = f"demo_model_{dataset_name}_e{epoch}_f{map_size_factor}"
     cache.set(model_loc, demo_model)

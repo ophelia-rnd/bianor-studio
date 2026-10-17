@@ -10,7 +10,7 @@ from collections import namedtuple
 
 _MLFLOW_URI_PREFIXES = ("models:", "runs:", "file:")
 
-DemoPythonModel = namedtuple("DemoPythonModel", ["model", "scaler"])
+DemoPythonModel = namedtuple("DemoPythonModel", ["model", "scaler", "projections"], defaults=[None])
 
 
 class ModelService:
