@@ -1,10 +1,14 @@
 from services.data_service import DataService
+from services.backend import is_local
+from services import local_catalog
 import constants.table as table_const
 
 class BianorRepresentationService(DataService):
 
     @classmethod
     def list(cls, cfg):
+        if is_local():
+            return local_catalog.representations()
         sqls = """
             SELECT ID, NAME, SOM_MODEL_LOCATION, FEATURES_LOCATION
             FROM IDENTIFIER(:table)
@@ -17,6 +21,8 @@ class BianorProjectionLayerService(DataService):
 
     @classmethod
     def list_mappings(cls, cfg):
+        if is_local():
+            return local_catalog.projection_mappings()
         sqls = """
             SELECT tr.NAME AS REPRESENTATION_NAME, t.NAME, t.SAMPLES_LOCATION, t.MARKER_DICT
             FROM IDENTIFIER(:table) t
@@ -33,6 +39,8 @@ class BianorProjectionLayerService(DataService):
 
     @classmethod
     def list_by_representation(cls, cfg, representation_id):
+        if is_local():
+            return local_catalog.projection_layers_by_representation(representation_id)
         sqls = """
             SELECT t.NAME, t.SAMPLES_LOCATION, t.MARKER_DICT
             FROM IDENTIFIER(:table) t
@@ -51,6 +59,8 @@ class BianorPredictionService(DataService):
 
     @classmethod
     def list_mappings(cls, cfg):
+        if is_local():
+            return local_catalog.prediction_mappings()
         sqls = """
             SELECT tr.NAME AS REPRESENTATION_NAME, t.NAME, t.PREDICTION_LOCATION
             FROM IDENTIFIER(:table) t
@@ -67,6 +77,8 @@ class BianorPredictionService(DataService):
 
     @classmethod
     def list_by_representation(cls, cfg, representation_id):
+        if is_local():
+            return local_catalog.predictions_by_representation(representation_id)
         sqls = """
         SELECT t.ID, t.NAME, t.PREDICTION_LOCATION
         FROM IDENTIFIER(:table) t
