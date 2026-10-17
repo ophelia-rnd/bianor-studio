@@ -1,0 +1,20 @@
+command: [
+  "python",
+  "app.py"
+]
+
+env:
+  - name: "DATABRICKS_WAREHOUSE_ID"
+    valueFrom: "sql-warehouse"
+
+  - name: "BIANOR_DATABRICKS_CATALOG"
+    value: "workspace"
+
+  - name: "BIANOR_DATABRICKS_SCHEMA"
+    value: "bianor"
+
+  - name: "CACHE_DEFAULT_TIMEOUT"
+    value: "300"
+
+  - name: "CACHE_DIR"
+    value: ".bianor_cache"

@@ -7,6 +7,7 @@ from dash import dcc, html, Input, Output, State
 from lilypond.basin import Basin
 from utils.figure_style import style_figure
 from registry import registry
+from functools import lru_cache
 
 dash.register_page(
     __name__,
@@ -15,28 +16,10 @@ dash.register_page(
     icon="bi-map"
 )
 
+from cache import cache
+from databricks.sdk.core import Config
 
-def get_app():
-    from dash import get_app
-    from databricks.sdk.core import Config
-    return Config(), get_app()
-
-
-def setup_cache(app):
-    from flask_caching import Cache
-    return Cache(
-        app.server,
-        config={
-            "CACHE_TYPE": "FileSystemCache",
-            "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": 480,
-        }
-    )
-
-
-cfg, app = get_app()
-cache = setup_cache(app)
-
+cfg = Config()
 
 def create_plot_config():
     plot_config = dict(
@@ -244,18 +227,18 @@ def fetch_features_by_join(table, join_table):
     from services.feature_service import FeatureService
     return FeatureService.list_by_join(cfg, table, join_table)
 
-@cache.memoize()
+@lru_cache(maxsize=3)
 def load_model(model_loc):
     from services.model_service import ModelService
     return ModelService.load(model_loc)
 
-@cache.memoize()
+@lru_cache(maxsize=3)
 def load_representation(model_loc):
     model = load_model(model_loc)
     som_rep = model.model
     return som_rep
 
-@cache.memoize()
+@lru_cache(maxsize=3)
 def load_scaler(model_loc):
     model = load_model(model_loc)
     scaler = model.scaler

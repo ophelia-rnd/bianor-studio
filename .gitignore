@@ -217,9 +217,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Databricks
-app.yaml
-
 # Other
 .idea
 .DS_Store

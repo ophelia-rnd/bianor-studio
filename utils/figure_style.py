@@ -1,4 +1,4 @@
-def style_figure(fig, colorscale="plasma"):
+def style_figure(fig):
     fig.update_layout(
         # Canvas Transparency & Dark Palette
         paper_bgcolor="rgba(0,0,0,0)",
@@ -28,29 +28,6 @@ def style_figure(fig, colorscale="plasma"):
             zeroline=False,
             tickfont=dict(color="#64748B")
         ),
-
-        # Sleek Legend & Colorbar
-        showlegend=True,
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1,
-            font=dict(color="#94A3B8")
-        )
-    )
-
-    # Compact, Slim Colorbars (if heatmap/2D plot)
-    fig.update_coloraxes(
-        colorscale=colorscale,
-        colorbar=dict(
-            len=1,
-            thickness=30,
-            outlinewidth=0,
-            tickfont=dict(color="#64748B", size=12),
-            title=dict(font=dict(color="#94A3B8", size=11))
-        )
     )
 
     return fig

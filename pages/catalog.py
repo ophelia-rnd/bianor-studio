@@ -10,24 +10,10 @@ dash.register_page(
     icon="bi-collection"
 )
 
-def get_app():
-    from dash import get_app
-    from databricks.sdk.core import Config
-    return Config(), get_app()
+from cache import cache
+from databricks.sdk.core import Config
 
-def setup_cache(app):
-    from flask_caching import Cache
-    return Cache(
-        app.server,
-        config={
-            "CACHE_TYPE": "FileSystemCache",
-            "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": 480,
-        }
-    )
-
-cfg, app = get_app()
-cache = setup_cache(app)
+cfg = Config()
 
 def create_datatable(elem_id:str):
     return dash_table.DataTable(
