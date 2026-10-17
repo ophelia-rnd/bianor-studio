@@ -25,22 +25,12 @@ def setup_app():
     )
     return "Bianor", Config(), app
 
-def setup_cache(app):
-    from flask_caching import Cache
-    timeout = int(os.getenv("CACHE_DEFAULT_TIMEOUT", 300))
-    return Cache(
-        app.server,
-        config={
-            "CACHE_TYPE": "FileSystemCache",
-            "CACHE_DIR": ".bianor_cache",
-            "CACHE_DEFAULT_TIMEOUT": timeout,
-        }
-    )
+from cache import cache
 
 load_verify_env()
 APP_NAME, cfg, app = setup_app()
 server = app.server
-cache = setup_cache(app)
+cache.init_app(server)
 
 
 def serve_layout():

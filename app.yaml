@@ -15,3 +15,6 @@ env:
 
   - name: "CACHE_DEFAULT_TIMEOUT"
     value: "300"
+
+  - name: "CACHE_DIR"
+    value: ".bianor_cache"
