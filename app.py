@@ -4,8 +4,21 @@ import dash_bootstrap_components as dbc
 
 from dash import Dash, dcc, html, Input, Output, State, ALL
 from registry import registry
-from constants.demo import MAP_SIZE_LABELS
-from utils.demo import is_demo_id
+from constants.demo import (
+    DEMO_DATASET_OPTIONS,
+    DEMO_DEFAULT_DATASET,
+    DEMO_MIN_EPOCHS,
+    DEMO_MAX_EPOCHS,
+    DEMO_DEFAULT_EPOCHS,
+    DEMO_MAP_SIZE_OPTIONS,
+    DEMO_DEFAULT_MAP_SIZE,
+)
+from utils.demo import (
+    is_demo_id,
+    get_cached_demo_maps,
+    get_cached_demo_map,
+    train_and_cache_demo,
+)
 
 def load_verify_env():
     import os
@@ -159,36 +172,27 @@ def serve_layout():
                         html.P("Select a toy dataset to instantly map it into a 2D representation to be explored.", className="text-muted small"),
                         dcc.Dropdown(
                             id="drp-demo-dataset",
-                            options=[
-                                {"label": "Iris Dataset (150 samples)", "value": "iris"},
-                                {"label": "Wine Dataset (178 samples)", "value": "wine"},
-                                {"label": "Breast Cancer Dataset (569 samples)", "value": "breast_cancer"},
-                                {"label": "Digits Dataset (1,797 samples)", "value": "digits"},
-                            ],
-                            value="iris",
+                            options=DEMO_DATASET_OPTIONS,
+                            value=DEMO_DEFAULT_DATASET,
                             clearable=False,
                             searchable=False,
                             className="mb-3"
                         ),
-                        html.P("Number of epochs (1-50):", className="text-muted small mb-1"),
+                        html.P(f"Number of epochs ({DEMO_MIN_EPOCHS}-{DEMO_MAX_EPOCHS}):", className="text-muted small mb-1"),
                         dbc.Input(
                             id="inp-demo-epoch",
                             type="number",
-                            min=1,
-                            max=50,
+                            min=DEMO_MIN_EPOCHS,
+                            max=DEMO_MAX_EPOCHS,
                             step=1,
-                            value=25,
+                            value=DEMO_DEFAULT_EPOCHS,
                             className="mb-3"
                         ),
                         html.P("Map Size:", className="text-muted small mb-1"),
                         dbc.RadioItems(
                             id="rad-demo-map-size",
-                            options=[
-                                {"label": "Regular", "value": 1.0},
-                                {"label": "Large", "value": 2.0},
-                                {"label": "Super", "value": 3.5},
-                            ],
-                            value=1.0,
+                            options=DEMO_MAP_SIZE_OPTIONS,
+                            value=DEMO_DEFAULT_MAP_SIZE,
                             inline=True,
                             className="mb-3"
                         ),
@@ -281,7 +285,7 @@ def __validate_demo_epoch(epoch):
         return True
     try:
         epoch = int(epoch)
-        return not (1 <= epoch <= 50)
+        return not (DEMO_MIN_EPOCHS <= epoch <= DEMO_MAX_EPOCHS)
     except ValueError:
         return True
 
@@ -326,8 +330,7 @@ def __toggle_sidebar(n_clicks, current_style):
 def get_map_options():
     map_df = fetch_map_configs()
     options = [{"label": item["NAME"], "value": item["ID"]} for idx, item in map_df.iterrows()]
-    demo_maps = cache.get("all_demo_maps") or []
-    for d in demo_maps:
+    for d in get_cached_demo_maps(cache):
         if not any(opt["value"] == d["ID"] for opt in options):
             options.append({"label": d["NAME"], "value": d["ID"]})
     return options
@@ -337,13 +340,7 @@ def get_map_by_id(selected_map_id):
     if not selected_map_id:
         return None
     if is_demo_id(selected_map_id):
-        demo = cache.get(str(selected_map_id))
-        if demo:
-            return demo
-        demo_maps = cache.get("all_demo_maps") or []
-        for d in demo_maps:
-            if d.get("ID") == selected_map_id:
-                return d
+        return get_cached_demo_map(selected_map_id, cache)
     maps_df = fetch_map_configs()
     matches = maps_df.loc[maps_df["ID"] == selected_map_id]
     if not matches.empty:
@@ -438,72 +435,17 @@ def __run_quick_demo(training_data):
     epoch = training_data["epoch"]
     map_size_factor = training_data.get("map_size_factor", 1.0)
 
-    from sklearn import datasets
-    from sklearn.preprocessing import StandardScaler
-    from minisom_representation import calc_som_hyparams, SomRepresentation, calc_initial_sigma
-    
-    if dataset_name == "iris":
-        data = datasets.load_iris(as_frame=True)
-    elif dataset_name == "wine":
-        data = datasets.load_wine(as_frame=True)
-    elif dataset_name == "digits":
-        data = datasets.load_digits(as_frame=True)
-    else:
-        data = datasets.load_breast_cancer(as_frame=True)
-        
-    X = data.data
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    
-    RANDOM_SEED = 42
-    VERBOSE = False
-
-    recommended_params = calc_som_hyparams(X_scaled, initial_sigma_factor=3.0)
-    d1, d2, sigma = map(recommended_params.get, ("d1", "d2", "sigma"))
-    
-    if map_size_factor != 1.0:
-        d1 = int(round(d1 * map_size_factor))
-        d2 = int(round(d2 * map_size_factor))
-        sigma = calc_initial_sigma(d1, d2, factor=3.0)
-
-    decay_function = "linear_decay_to_zero"
-    epoch = int(epoch) if epoch else 50
-    epoch = max(1, min(50, epoch))
-
-    som_rep = SomRepresentation(d1=d1, d2=d2, sigma=sigma, random_seed=RANDOM_SEED, verbose=VERBOSE, decay_function=decay_function) \
-        .fit_online(X_scaled, num_iteration=epoch)
-        
-    from services.model_service import DemoPythonModel
-    from utils.demo import build_demo_projections
-    demo_projections = build_demo_projections(data, dataset_name)
-    demo_model = DemoPythonModel(model=som_rep, scaler=scaler, projections=demo_projections)
-    
-    model_loc = f"demo_model_{dataset_name}_e{epoch}_f{map_size_factor}"
-    cache.set(model_loc, demo_model)
-
-    dataset_display = dataset_name.replace("_", " ").capitalize()
-    size_label = MAP_SIZE_LABELS.get(float(map_size_factor), f"{map_size_factor}x")
-    demo_id = f"demo_id_{dataset_name}_e{epoch}_f{map_size_factor}"
-    demo_map = {
-        "ID": demo_id,
-        "NAME": f"Demo: {dataset_display} ({size_label}, Epochs: {epoch})",
-        "SOM_MODEL_LOCATION": model_loc,
-        "IS_DEMO": True
-    }
-    cache.set(demo_id, demo_map)
-    demo_maps = cache.get("all_demo_maps") or []
-    demo_maps = [d for d in demo_maps if d.get("ID") != demo_id] + [demo_map]
-    cache.set("all_demo_maps", demo_maps)
+    demo_map = train_and_cache_demo(dataset_name, epoch, map_size_factor, cache)
 
     elapsed = time.time() - start_time
     if elapsed < 3.0:
         time.sleep(3.0 - elapsed)
-        
+
     updated_options = get_map_options()
 
     return (
         updated_options,
-        demo_id,
+        demo_map["ID"],
         demo_map,
         "/explorer",
         False,

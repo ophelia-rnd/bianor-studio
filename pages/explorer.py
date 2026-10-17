@@ -19,7 +19,7 @@ dash.register_page(
 from cache import cache
 from services.backend import is_local
 from databricks.sdk.core import Config
-from utils.demo import is_demo_id, is_demo_model
+from utils.demo import is_demo_id, is_demo_model, apply_demo_projections
 
 cfg = Config() if not is_local() else None
 
@@ -517,7 +517,6 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_compo
 
     if view == "projections":
         if is_demo_id(selected_map.get("ID")):
-            from utils.demo import apply_demo_projections
             apply_demo_projections(pond, load_model(som_rep_model_loc), load_scaler(som_rep_model_loc))
         else:
             projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))

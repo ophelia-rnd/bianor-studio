@@ -6,11 +6,9 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from minisom_representation import SomRepresentation
 
 from services.backend import is_local, local_root
-from collections import namedtuple
+from utils.demo import DemoPythonModel, is_demo_model
 
 _MLFLOW_URI_PREFIXES = ("models:", "runs:", "file:")
-
-DemoPythonModel = namedtuple("DemoPythonModel", ["model", "scaler", "projections"], defaults=[None])
 
 
 class ModelService:
@@ -53,7 +51,6 @@ class ModelService:
 
     @classmethod
     def load(cls, model_loc, registry_uri="databricks-uc"):
-        from utils.demo import is_demo_model
         if is_demo_model(model_loc):
             from cache import cache
             demo_model = cache.get(model_loc)
