@@ -56,8 +56,35 @@ Choose your deployment mode to configure and launch Bianor.
 
 === ":material-laptop: Local Run"
 
-    !!! warning "Work in Progress"
-        Local execution documentation and workflows are currently under active development.
+    Deploy and run Bianor directly on your local workstation.
+
+    ### 1. Clone repository
+    ```bash
+    git clone https://github.com/ophelia-rnd/bianor-databricks.git
+    ```
+
+    ### 2. Install dependencies
+    ```bash
+    cd bianor-databricks
+    pip install -r requirements.txt
+    ```
+
+    ### 3. Configure `.env`
+    ```bash
+    cp .env.local.example .env
+    ```
+    ```env
+    # .env file
+    BIANOR_BACKEND=local
+    BIANOR_LOCAL_CATALOG_ROOT=./bianor_local_catalog
+    ```
+
+    ### 4. Launch Bianor
+    Run the following command and open `http://localhost:8050`.
+    ```bash
+    python app.py
+    ```
+
 
 ---
 

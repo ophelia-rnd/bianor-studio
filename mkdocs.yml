@@ -71,8 +71,10 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 nav:
-  - Home: index.md
+  - Home:
+      - Overview: index.md
+      - Core Features: features.md
   - "Community Edition":
-      - Prerequisites: individual/setup.md
-      - Launch Bianor: individual/run.md
+      - Prerequisites: individual/prerequisites.md
+      - Launch Bianor: individual/launch.md
       - Modeling & Configuration: individual/modeling.md
