@@ -42,19 +42,26 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: .8rem;
+    gap: .5rem;
     flex-shrink: 0;
 
     padding: .9rem;
     padding-top: 0;
 
-    #btn-create, .nav-link {
+    #btn-create, #btn-quick-demo, .nav-link {
         border-radius: 5px;
+    }
+    
+    #btn-create, #btn-quick-demo {
+        padding: .3rem 1rem;
     }
 
     #btn-create {
         background-color: rgba(112, 36, 230, 0.5);
-        padding: .3rem 1rem;
+    }
+
+    #btn-quick-demo {
+        background-color: rgba(217, 70, 239, 0.1);
     }
 
     .nav-link {
@@ -84,7 +91,9 @@
     }
 
     .dropdown {
-        width: 300px;
+        min-width: 300px;
+        max-width: 440px;
+        width: 100%;
         color: black;
     }
 

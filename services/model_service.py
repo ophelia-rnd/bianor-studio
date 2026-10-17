@@ -6,8 +6,11 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from minisom_representation import SomRepresentation
 
 from services.backend import is_local, local_root
+from collections import namedtuple
 
 _MLFLOW_URI_PREFIXES = ("models:", "runs:", "file:")
+
+DemoPythonModel = namedtuple("DemoPythonModel", ["model", "scaler"])
 
 
 class ModelService:
@@ -50,6 +53,13 @@ class ModelService:
 
     @classmethod
     def load(cls, model_loc, registry_uri="databricks-uc"):
+        from utils.demo import is_demo_model
+        if is_demo_model(model_loc):
+            from cache import cache
+            demo_model = cache.get(model_loc)
+            assert demo_model is not None, f"Demo model '{model_loc}' not found in cache. Please regenerate it via Quick Demo."
+            return demo_model
+
         model_uri = cls._resolve_uri(model_loc, registry_uri)
         python_model = mlflow.pyfunc.load_model(model_uri).unwrap_python_model()
 

@@ -19,6 +19,7 @@ dash.register_page(
 from cache import cache
 from services.backend import is_local
 from databricks.sdk.core import Config
+from utils.demo import is_demo_id, is_demo_model
 
 cfg = Config() if not is_local() else None
 
@@ -235,16 +236,25 @@ layout = lambda: html.Div(
 
 @cache.memoize()
 def fetch_projection_layer_configs(representation_id):
+    if not representation_id or is_demo_id(representation_id):
+        import pandas as pd
+        return pd.DataFrame()
     from services.map_service import BianorProjectionLayerService
     return BianorProjectionLayerService.list_by_representation(cfg, representation_id)
 
 @cache.memoize()
 def fetch_predictions(table, limit:int = 100, offset:int = 0):
+    if not table or is_demo_model(table):
+        import pandas as pd
+        return pd.DataFrame(columns=["id"])
     from services.table_service import TableService
     return TableService.list(cfg, table, limit=limit, offset=offset)
 
 @cache.memoize()
 def fetch_features(table, ids):
+    if not table or is_demo_model(table):
+        import pandas as pd
+        return pd.DataFrame()
     from services.feature_service import FeatureService
     return FeatureService.list_by_ids(cfg, table, pks=ids)
 

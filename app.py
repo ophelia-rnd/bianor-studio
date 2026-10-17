@@ -4,6 +4,8 @@ import dash_bootstrap_components as dbc
 
 from dash import Dash, dcc, html, Input, Output, State, ALL
 from registry import registry
+from constants.demo import MAP_SIZE_LABELS
+from utils.demo import is_demo_id
 
 def load_verify_env():
     import os
@@ -121,6 +123,14 @@ def serve_layout():
                 size="sm",
                 children=[html.I(className="bi bi-plus-lg fs-5 me-1", style={"color": "#a855f7"}), "New"],
             ),
+            dbc.Button(
+                id="btn-quick-demo",
+                className="text-start d-flex align-items-center text-white",
+                n_clicks=0,
+                color=None,
+                size="sm",
+                children=[html.I(className="bi bi-magic fs-5 me-1", style={"color": "#d946ef"}), "Quick Demo"],
+            ),
             dbc.Modal(
                 id="mdl-create",
                 is_open=False,
@@ -137,6 +147,55 @@ def serve_layout():
                             className="me-auto small text-muted"
                         ),
                         dbc.Button("Close", id="close", className="ms-auto", n_clicks=0)
+                    ])
+                ]
+            ),
+            dbc.Modal(
+                id="mdl-quick-demo",
+                is_open=False,
+                children=[
+                    dbc.ModalHeader(dbc.ModalTitle("Quick Demo")),
+                    dbc.ModalBody([
+                        html.P("Select a toy dataset to instantly map it into a 2D representation to be explored.", className="text-muted small"),
+                        dcc.Dropdown(
+                            id="drp-demo-dataset",
+                            options=[
+                                {"label": "Iris Dataset (150 samples)", "value": "iris"},
+                                {"label": "Wine Dataset (178 samples)", "value": "wine"},
+                                {"label": "Breast Cancer Dataset (569 samples)", "value": "breast_cancer"},
+                                {"label": "Digits Dataset (1,797 samples)", "value": "digits"},
+                            ],
+                            value="iris",
+                            clearable=False,
+                            searchable=False,
+                            className="mb-3"
+                        ),
+                        html.P("Number of epochs (1-50):", className="text-muted small mb-1"),
+                        dbc.Input(
+                            id="inp-demo-epoch",
+                            type="number",
+                            min=1,
+                            max=50,
+                            step=1,
+                            value=25,
+                            className="mb-3"
+                        ),
+                        html.P("Map Size:", className="text-muted small mb-1"),
+                        dbc.RadioItems(
+                            id="rad-demo-map-size",
+                            options=[
+                                {"label": "Regular", "value": 1.0},
+                                {"label": "Large", "value": 2.0},
+                                {"label": "Super", "value": 3.5},
+                            ],
+                            value=1.0,
+                            inline=True,
+                            className="mb-3"
+                        ),
+                    ]),
+                    dbc.ModalFooter([
+                        dbc.Button("Cancel", id="btn-demo-cancel", color="light", n_clicks=0, className="me-2"),
+                        dbc.Button("Map & Explore", id="btn-demo-run", color="primary", n_clicks=0)
                     ])
                 ]
             ),
@@ -158,14 +217,32 @@ def serve_layout():
         id="main-container",
         className="d-flex flex-column min-vh-100",
         children=[
-            dcc.Location(id="url", refresh=False),
             dcc.Store(id="selected_map"),
             dcc.Store(id="selected_prediction"),
+            dcc.Store(id="trigger-training"),
             navbar,
             html.Div(
                 id="body-container",
                 className="d-flex flex-grow-1",
                 children=[sidebar, dash.page_container],
+            ),
+            dbc.Modal(
+                id="mdl-training-progress",
+                is_open=False,
+                backdrop="static",
+                keyboard=False,
+                centered=True,
+                contentClassName="bg-transparent border-0 shadow-none",
+                children=[
+                    dbc.ModalBody(
+                        className="d-flex flex-column align-items-center justify-content-center p-5",
+                        children=[
+                            dbc.Spinner(color="primary", spinner_style={"width": "4rem", "height": "4rem", "borderWidth": "0.4em"}),
+                            html.H4("Mapping Data...", className="mt-4 fw-bold text-white shadow-sm"),
+                            html.P("Please wait while the map is being generated.", className="text-white-50 mb-0")
+                        ]
+                    )
+                ]
             )
         ]
     )
@@ -179,6 +256,9 @@ def fetch_map_configs():
 
 @cache.memoize()
 def fetch_prediction_configs(selected_map_id):
+    if not selected_map_id or is_demo_id(selected_map_id):
+        import pandas as pd
+        return pd.DataFrame()
     from services.map_service import BianorPredictionService
     return BianorPredictionService.list_by_representation(cfg, representation_id=selected_map_id)
 
@@ -189,6 +269,29 @@ def fetch_prediction_configs(selected_map_id):
 ) # FIXME
 def __open_create_modal(n1, n2, is_open):
     if n1 or n2:
+        return not is_open
+    return is_open
+
+@app.callback(
+    Output("btn-demo-run", "disabled"),
+    Input("inp-demo-epoch", "value"),
+)
+def __validate_demo_epoch(epoch):
+    if epoch is None:
+        return True
+    try:
+        epoch = int(epoch)
+        return not (1 <= epoch <= 50)
+    except ValueError:
+        return True
+
+@app.callback(
+    Output("mdl-quick-demo", "is_open"),
+    [Input("btn-quick-demo", "n_clicks"), Input("btn-demo-cancel", "n_clicks"), Input("btn-demo-run", "n_clicks")],
+    [State("mdl-quick-demo", "is_open")],
+)
+def __toggle_demo_modal(n1, n2, n3, is_open):
+    if n1 or n2 or n3:
         return not is_open
     return is_open
 
@@ -220,13 +323,41 @@ def __toggle_sidebar(n_clicks, current_style):
     current_style["display"] = "flex" if is_hidden else "none"
     return current_style
 
-@app.callback(Output("drp-map", "options"),
+def get_map_options():
+    map_df = fetch_map_configs()
+    options = [{"label": item["NAME"], "value": item["ID"]} for idx, item in map_df.iterrows()]
+    demo_maps = cache.get("all_demo_maps") or []
+    for d in demo_maps:
+        if not any(opt["value"] == d["ID"] for opt in options):
+            options.append({"label": d["NAME"], "value": d["ID"]})
+    return options
+
+
+def get_map_by_id(selected_map_id):
+    if not selected_map_id:
+        return None
+    if is_demo_id(selected_map_id):
+        demo = cache.get(str(selected_map_id))
+        if demo:
+            return demo
+        demo_maps = cache.get("all_demo_maps") or []
+        for d in demo_maps:
+            if d.get("ID") == selected_map_id:
+                return d
+    maps_df = fetch_map_configs()
+    matches = maps_df.loc[maps_df["ID"] == selected_map_id]
+    if not matches.empty:
+        return matches.iloc[0].to_dict()
+    return None
+
+
+@app.callback(
+    Output("drp-map", "options"),
     Input("drp-map", "id"),
 )
 def __update_drp_map_options(_):
-    map_df = fetch_map_configs()
-    options = [{"label": item["NAME"], "value": item["ID"]} for idx, item in map_df.iterrows()]
-    return options
+    return get_map_options()
+
 
 @app.callback(
     Output("drp-prediction", "options"),
@@ -243,15 +374,14 @@ def __update_drp_prediction_options(selected_map_id, current_style):
     current_style["visibility"] = "visible" if not is_disabled else "hidden"
     return options, None, is_disabled, current_style
 
+
 @app.callback(
     Output("selected_map", "data"),
     Input("drp-map", "value"),
 )
 def __store_selected_map(selected_map_id):
-    if not selected_map_id: return None
-    maps_df = fetch_map_configs()
-    selected_map = maps_df.loc[maps_df["ID"] == selected_map_id].iloc[0].to_dict()
-    return selected_map
+    return get_map_by_id(selected_map_id)
+
 
 @app.callback(
     Output("selected_prediction", "data"),
@@ -263,6 +393,121 @@ def __store_selected_prediction(selected_map, selected_pred_id):
     pred_df = fetch_prediction_configs(selected_map_id=selected_map["ID"])
     selected_pred = pred_df.loc[pred_df["ID"] == selected_pred_id].iloc[0].to_dict()
     return selected_pred
+
+
+@app.callback(
+    Output("trigger-training", "data"),
+    Output("mdl-training-progress", "is_open"),
+    Input("btn-demo-run", "n_clicks"),
+    State("drp-demo-dataset", "value"),
+    State("inp-demo-epoch", "value"),
+    State("rad-demo-map-size", "value"),
+    prevent_initial_call=True
+)
+def __start_training(n_clicks, dataset, epoch, map_size_factor):
+    if not n_clicks:
+        return dash.no_update, dash.no_update
+    return (
+        {"dataset": dataset, "epoch": epoch, "map_size_factor": map_size_factor},
+        True
+    )
+
+
+@app.callback(
+    Output("drp-map", "options", allow_duplicate=True),
+    Output("drp-map", "value", allow_duplicate=True),
+    Output("selected_map", "data", allow_duplicate=True),
+    Output("_pages_location", "pathname", allow_duplicate=True),
+    Output("mdl-training-progress", "is_open", allow_duplicate=True),
+    Output("selected_prediction", "data", allow_duplicate=True),
+    Output("drp-prediction", "value", allow_duplicate=True),
+    Input("trigger-training", "data"),
+    prevent_initial_call=True
+)
+def __run_quick_demo(training_data):
+    if not training_data:
+        return (
+            dash.no_update, dash.no_update, dash.no_update,
+            dash.no_update, dash.no_update, dash.no_update, dash.no_update
+        )
+
+    import time
+    start_time = time.time()
+
+    dataset_name = training_data["dataset"]
+    epoch = training_data["epoch"]
+    map_size_factor = training_data.get("map_size_factor", 1.0)
+
+    from sklearn import datasets
+    from sklearn.preprocessing import StandardScaler
+    from minisom_representation import calc_som_hyparams, SomRepresentation, calc_initial_sigma
+    
+    if dataset_name == "iris":
+        data = datasets.load_iris(as_frame=True)
+    elif dataset_name == "wine":
+        data = datasets.load_wine(as_frame=True)
+    elif dataset_name == "digits":
+        data = datasets.load_digits(as_frame=True)
+    else:
+        data = datasets.load_breast_cancer(as_frame=True)
+        
+    X = data.data
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    RANDOM_SEED = 42
+    VERBOSE = False
+
+    recommended_params = calc_som_hyparams(X_scaled, initial_sigma_factor=3.0)
+    d1, d2, sigma = map(recommended_params.get, ("d1", "d2", "sigma"))
+    
+    if map_size_factor != 1.0:
+        d1 = int(round(d1 * map_size_factor))
+        d2 = int(round(d2 * map_size_factor))
+        sigma = calc_initial_sigma(d1, d2, factor=3.0)
+
+    decay_function = "linear_decay_to_zero"
+    epoch = int(epoch) if epoch else 50
+    epoch = max(1, min(50, epoch))
+
+    som_rep = SomRepresentation(d1=d1, d2=d2, sigma=sigma, random_seed=RANDOM_SEED, verbose=VERBOSE, decay_function=decay_function) \
+        .fit_online(X_scaled, num_iteration=epoch)
+        
+    from services.model_service import DemoPythonModel
+    demo_model = DemoPythonModel(model=som_rep, scaler=scaler)
+    
+    model_loc = f"demo_model_{dataset_name}_e{epoch}_f{map_size_factor}"
+    cache.set(model_loc, demo_model)
+
+    dataset_display = dataset_name.replace("_", " ").capitalize()
+    size_label = MAP_SIZE_LABELS.get(float(map_size_factor), f"{map_size_factor}x")
+    demo_id = f"demo_id_{dataset_name}_e{epoch}_f{map_size_factor}"
+    demo_map = {
+        "ID": demo_id,
+        "NAME": f"Demo: {dataset_display} ({size_label}, Epochs: {epoch})",
+        "SOM_MODEL_LOCATION": model_loc,
+        "IS_DEMO": True
+    }
+    cache.set(demo_id, demo_map)
+    demo_maps = cache.get("all_demo_maps") or []
+    demo_maps = [d for d in demo_maps if d.get("ID") != demo_id] + [demo_map]
+    cache.set("all_demo_maps", demo_maps)
+
+    elapsed = time.time() - start_time
+    if elapsed < 3.0:
+        time.sleep(3.0 - elapsed)
+        
+    updated_options = get_map_options()
+
+    return (
+        updated_options,
+        demo_id,
+        demo_map,
+        "/explorer",
+        False,
+        None,
+        None,
+    )
 
 if __name__ == "__main__":
     debug = os.getenv("DEBUG_MODE", "false").lower() in ("true", "1")
