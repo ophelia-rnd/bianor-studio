@@ -68,7 +68,7 @@ The Apache 2.0 license grants permissions for the source code, but does not gran
 
 For questions, feedback, or enterprise inquiries:
 - **Partnerships:** Reach out at [hello@ophelia-rnd.dev](mailto:hello@ophelia-rnd.dev)
-- **Issues & Feature Requests:** Open an issue [here](https://github.com/ophelia-rnd/bianor-databricks/issues)
+- **Issues & Feature Requests:** Open an issue [here](https://github.com/ophelia-rnd/bianor/issues)
 - Learn more about the [team and mission](https://bianor.ophelia-rnd.dev) behind Bianor or connect on [LinkedIn](https://www.linkedin.com/company/bianor-insights)
 
 
