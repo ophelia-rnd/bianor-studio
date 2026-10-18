@@ -161,7 +161,7 @@ def serve_layout():
                     dbc.ModalBody([
                         "In order to populate your Bianor application with additional models and layers, refer to the ",
                         html.A("Documentation", href="https://bianor-documentation.onrender.com", target="_blank"),
-                        " toolkit."
+                        "."
                     ]),
                     dbc.ModalFooter([
                         html.Span(
