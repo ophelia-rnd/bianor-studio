@@ -112,6 +112,24 @@
             box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
         }
     }
+
+    .navbar-doc-btn {
+        font-size: 0.78rem;
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 0.35rem 0.85rem;
+        color: #adb5bd;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.12) !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
+            color: #f8f9fa !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+    }
 }
 
 #navbar i, #sidebar .nav-link {

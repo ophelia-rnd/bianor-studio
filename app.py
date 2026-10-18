@@ -117,6 +117,15 @@ def serve_layout():
                                 )
                             ]
                         ),
+                        html.A(
+                            [
+                                html.I(className="bi bi-book me-1"),
+                                html.Span("Documentation", className="ms-1"),
+                            ],
+                            href="https://bianor-documentation.onrender.com",
+                            target="_blank",
+                            className="ms-auto me-2 d-flex align-items-center text-decoration-none navbar-doc-btn",
+                        ),
                         registry.navbar_cta()
                     ]
                 )
@@ -150,8 +159,8 @@ def serve_layout():
                 children=[
                     dbc.ModalHeader(dbc.ModalTitle("New Representation")),
                     dbc.ModalBody([
-                        "In order to populate your Bianor application with additional models and layers, use the ",
-                        html.A("bianor-databricks-kit", href="https://github.com/ophelia-rnd/bianor-databricks-kit", target="_blank"),
+                        "In order to populate your Bianor application with additional models and layers, refer to the ",
+                        html.A("Documentation", href="https://bianor-documentation.onrender.com", target="_blank"),
                         " toolkit."
                     ]),
                     dbc.ModalFooter([
