@@ -14,89 +14,63 @@ ______________________________________________________________________
 <p align="center">
     <a href="https://bianor.ophelia-rnd.dev"><b>About Bianor</b></a>
     &nbsp;•&nbsp; <a href="https://demo.bianor.ophelia-rnd.dev"><b>Demo</b></a>
-    &nbsp;•&nbsp; <a href="https://www.linkedin.com/company/ophelia-rnd"><b>Team behind Bianor</b></a>
+    &nbsp;•&nbsp; <a href="https://bianor-documentation.onrender.com"><b>Documentation</b></a>
+    &nbsp;•&nbsp; <a href="https://www.linkedin.com/company/bianor-insights"><b>Contact Us</b></a>
 </p>
 
-______________________________________________________________________
 
 ## About
 
-**Bianor** is an installable **Databricks App** designed for interactive exploration and contextualization of the data and models residing in your workspace.
-
-## Overview
-
-Setting up your Bianor application involves the following steps:
-
-1. **Environment Setup:** Preparing your Bianor environment in Databricks.
-2. **Application Deployment:** Deploy your Bianor app.
-3. **Model Training & Registration:** Training and registering your models to be inspected in Bianor.
-
-> [!NOTE]
-> The trained and registered models are completely independent of the Bianor application itself. They are trained and managed through your standard MLflow / Databricks lifecycle and are simply linked to the app for interactive exploration.
-
-> [!TIP]
-> You may run Bianor locally while still accessing your data in your Databricks workspace.
-> To do so, refer to the [documentation](/docs/get_started.md).
+**Bianor** is an **interactive app** for exploring and contextualizing high-dimensional data via Self-Organizing Map (SOM) representations.
 
 ## Getting Started
 
-### 1. Environment Setup
+Deploy and run Bianor directly on your local workstation.
 
-Use the [`bianor-databricks-kit`](https://github.com/ophelia-rnd/bianor-databricks-kit) library to set up the Bianor app environment in your Databricks workspace.
+### 1. Clone repository
+```bash
+git clone https://github.com/ophelia-rnd/bianor.git
+```
 
-### 2. Application Deployment
+### 2. Install dependencies
+```bash
+cd bianor
+pip install -r requirements.txt
+```
 
-1. **Clone the repository**  
-   In your Databricks workspace, clone this repository.
+### 3. Configure `.env`
+```bash
+cp .env.local.example .env
+```
+```python
+# .env file
+BIANOR_BACKEND=local
+BIANOR_LOCAL_CATALOG_ROOT=./bianor_local_catalog
+```
 
-   ```bash
-   https://github.com/ophelia-rnd/bianor-databricks.git
-   ```
+### 4. Launch Bianor
+Run the application and open `http://localhost:8050`.
+```bash
+python app.py
+```
 
-2. **Configure `app.yaml`**  
-   Copy the example configuration (`app.yaml.example` $\rightarrow$ `app.yaml`).
-   Set your SQL Warehouse ID and target catalog / schema:
-   ```yaml
-   command: [
-     "python",
-     "app.py"
-   ]
+## Modeling and Configuration
 
-   env:
-     - name: "DATABRICKS_WAREHOUSE_ID"
-       valueFrom: "<sql-warehouse-id>"
+You can set up a local Bianor configuration or connect to your data and models residing in your Databricks workspace. To learn more, refer to the [Documentation](https://bianor-documentation.onrender.com).
 
-     - name: "BIANOR_DATABRICKS_CATALOG"
-       value: "<my_catalog>"
+## License
 
-     - name: "BIANOR_DATABRICKS_SCHEMA"
-       value: "<my_schema>"
-   ```
+This project is licensed under the [Apache License 2.0](LICENSE).
 
-3. **Deploy the app**  
-   Navigate to **Databricks Apps**, create a new app from the cloned repository, and deploy it.
-
-
-
-### 3. Model Training & Registration
-
-Train a `SomRepresentation` model using the [`minisom-representation`](https://github.com/ophelia-rnd/minisom-representation) library and register it in your Databricks workspace via MLflow.
-Finally, use the [`bianor-databricks-kit`](https://github.com/ophelia-rnd/bianor-databricks-kit) to link a registered model to your Bianor instance, so it can be inspected in the app.
+The Apache 2.0 license grants permissions for the source code, but does not grant rights to use the project's trademarks, logos, or brand names.
 
 ## Contact
 
 For questions, feedback, or enterprise inquiries:
 - **Partnerships:** Reach out at [hello@ophelia-rnd.dev](mailto:hello@ophelia-rnd.dev)
 - **Issues & Feature Requests:** Open an issue [here](https://github.com/ophelia-rnd/bianor-databricks/issues)
-- Learn more about the [team and mission](https://bianor.ophelia-rnd.dev) behind Bianor or connect on [LinkedIn](https://www.linkedin.com/company/ophelia-rnd)
+- Learn more about the [team and mission](https://bianor.ophelia-rnd.dev) behind Bianor or connect on [LinkedIn](https://www.linkedin.com/company/bianor-insights)
 
-## License
-
-This project is licensed under the [Apache License 2.0](LICENSE).
-
-"Bianor" and related logos are trademarks of Máté Balogh. The Apache 2.0 license grants permissions for the source code, but does not grant rights to use the project's trademarks, logos, or brand names.
-
-______________________________________________________________________
 
 <br>
 <br>
