@@ -19,6 +19,7 @@ dash.register_page(
 from cache import cache
 from services.backend import is_local
 from databricks.sdk.core import Config
+from utils.demo import is_demo_id, is_demo_model, apply_demo_projections
 
 cfg = Config() if not is_local() else None
 
@@ -235,16 +236,25 @@ layout = lambda: html.Div(
 
 @cache.memoize()
 def fetch_projection_layer_configs(representation_id):
+    if not representation_id or is_demo_id(representation_id):
+        import pandas as pd
+        return pd.DataFrame()
     from services.map_service import BianorProjectionLayerService
     return BianorProjectionLayerService.list_by_representation(cfg, representation_id)
 
 @cache.memoize()
 def fetch_predictions(table, limit:int = 100, offset:int = 0):
+    if not table or is_demo_model(table):
+        import pandas as pd
+        return pd.DataFrame(columns=["id"])
     from services.table_service import TableService
     return TableService.list(cfg, table, limit=limit, offset=offset)
 
 @cache.memoize()
 def fetch_features(table, ids):
+    if not table or is_demo_model(table):
+        import pandas as pd
+        return pd.DataFrame()
     from services.feature_service import FeatureService
     return FeatureService.list_by_ids(cfg, table, pks=ids)
 
@@ -506,14 +516,17 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_compo
             pond.rhizome_layer().pad_layer(gap="nogap").petal_layer()
 
     if view == "projections":
-        projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))
-        for i, config_record in projection_configs.iterrows():
-            X = fetch_features_by_join(table=selected_map["FEATURES_LOCATION"],
-                                       join_table=config_record["SAMPLES_LOCATION"])
-            X.set_index("id", drop=True, inplace=True)
-            scaler = load_scaler(som_rep_model_loc)
-            pond.attraction_layer(scaler.transform(X), name=config_record["NAME"],
-                                  marker=json.loads(config_record["MARKER_DICT"]))
+        if is_demo_id(selected_map.get("ID")):
+            apply_demo_projections(pond, load_model(som_rep_model_loc), load_scaler(som_rep_model_loc))
+        else:
+            projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))
+            for i, config_record in projection_configs.iterrows():
+                X = fetch_features_by_join(table=selected_map["FEATURES_LOCATION"],
+                                           join_table=config_record["SAMPLES_LOCATION"])
+                X.set_index("id", drop=True, inplace=True)
+                scaler = load_scaler(som_rep_model_loc)
+                pond.attraction_layer(scaler.transform(X), name=config_record["NAME"],
+                                      marker=json.loads(config_record["MARKER_DICT"]))
 
     selected_ids = [row.get("id") for row in (selected_rows or []) if row.get("id") is not None]
     if selected_prediction and selected_ids:
