@@ -90,6 +90,12 @@ For questions, feedback, or enterprise inquiries:
 - **Issues & Feature Requests:** Open an issue [here](https://github.com/ophelia-rnd/bianor-databricks/issues)
 - Learn more about the [team and mission](https://bianor.ophelia-rnd.dev) behind Bianor or connect on [LinkedIn](https://www.linkedin.com/company/ophelia-rnd)
 
+## License
+
+This project is licensed under the [Apache License 2.0](LICENSE).
+
+"Bianor" and related logos are trademarks of Máté Balogh. The Apache 2.0 license grants permissions for the source code, but does not grant rights to use the project's trademarks, logos, or brand names.
+
 ______________________________________________________________________
 
 <br>
