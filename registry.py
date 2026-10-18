@@ -10,12 +10,12 @@ class AppRegistry:
         
         self.navbar_cta = lambda: dbc.Button(
             [
-                html.I(className="bi bi-lightning-charge-fill mx-1 text-warning"),
-                html.Span("Contact the Team for More", className="fw-semibold"),
+                html.I(className="bi bi-lightning-charge-fill text-warning"),
+                html.Span("Contact the Team for More", className="fw-semibold ms-1"),
             ],
             id={"type": "open-premium-modal", "index": "navbar"},
             n_clicks=0,
-            className="ms-auto me-4 d-flex align-items-center text-decoration-none text-warning navbar-cta",
+            className="me-2 d-flex align-items-center text-decoration-none text-warning navbar-cta",
             color=None,
             size="sm",
         )

@@ -27,12 +27,12 @@ layout = html.Div(
             children=[
                 dbc.Button([html.I(className="bi bi-map me-2"), "Explore Bianor"], color="primary",
                            size="md", href="/explorer"),
-                dbc.Button([html.I(className="bi bi-github me-2"), "Install in Databricks"], outline=True, color="danger",
-                           size="md", href="https://github.com/ophelia-rnd/bianor-databricks", target="_blank"),
+                dbc.Button([html.I(className="bi bi-github me-2"), "Get Started"], color="danger",
+                           size="md", href="https://github.com/ophelia-rnd/bianor", target="_blank"),
+                dbc.Button([html.I(className="bi bi-book me-2"), "Documentation"], outline=True, color="light",
+                           size="md", href="https://bianor-documentation.onrender.com", target="_blank"),
                 dbc.Button([html.I(className="bi bi-box-arrow-up-right me-2"), "About Bianor"], outline=True, color="secondary",
                            size="md", href="https://bianor.ophelia-rnd.dev", target="_blank"),
-                dbc.Button([html.I(className="bi bi-linkedin me-2"), "Team behind Bianor"], outline=True, color="info",
-                           size="md", href="https://linkedin.com/company/ophelia-rnd", target="_blank"),
             ]
         )
     ]
