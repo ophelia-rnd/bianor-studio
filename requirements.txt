@@ -5,13 +5,8 @@ dash
 dash-bootstrap-components
 dash-ag-grid
 flask_caching
-
 pandas
 numpy
 scikit-learn
 mlflow
-
-databricks-sql-connector
-databricks-sdk
-
 som-lilypond

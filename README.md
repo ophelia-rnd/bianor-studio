@@ -33,9 +33,15 @@ git clone https://github.com/ophelia-rnd/bianor.git
 ```
 
 ### 2. Install dependencies
+For local mode (base dependencies):
 ```bash
 cd bianor
 pip install -r requirements.txt
+```
+
+To include Databricks connectivity:
+```bash
+pip install -r requirements-databricks.txt
 ```
 
 ### 3. Configure `.env`
