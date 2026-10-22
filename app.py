@@ -464,4 +464,4 @@ def __run_quick_demo(training_data):
 
 if __name__ == "__main__":
     debug = os.getenv("DEBUG_MODE", "false").lower() in ("true", "1")
-    app.run(debug=debug)
+    app.run(debug=debug, port=os.getenv("SERVER_PORT", None))
