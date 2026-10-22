@@ -17,11 +17,10 @@ dash.register_page(
 )
 
 from cache import cache
-from services.backend import is_local
-from databricks.sdk.core import Config
+from services.backend import get_databricks_config
 from utils.demo import is_demo_id, is_demo_model, apply_demo_projections
 
-cfg = Config() if not is_local() else None
+cfg = get_databricks_config()
 
 def create_plot_config():
     plot_config = dict(

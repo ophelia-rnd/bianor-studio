@@ -37,10 +37,18 @@ class DataService:
 
     @classmethod
     def execute(cls, cfg, sqls, params=None):
+        try:
+            from databricks import sql
+        except ImportError as exc:
+            raise ImportError(
+                "Connecting to Databricks SQL requires 'databricks-sql-connector'. "
+                "Please install it with `pip install databricks-sql-connector` or switch "
+                "to local mode (BIANOR_BACKEND=local)."
+            ) from exc
+
         data = pd.DataFrame([])
 
         try:
-            from databricks import sql
             with sql.connect(
                     server_hostname=cfg.host,
                     http_path=f"/sql/1.0/warehouses/{os.getenv('DATABRICKS_WAREHOUSE_ID')}",

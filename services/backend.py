@@ -63,3 +63,21 @@ def local_root():
 
 def catalog_path():
     return local_root() / "catalog.yaml"
+
+
+def get_databricks_config():
+    """
+    Returns Databricks SDK Config if running with the Databricks backend.
+    In local mode, returns None without importing databricks-sdk.
+    """
+    if is_local():
+        return None
+    try:
+        from databricks.sdk.core import Config
+        return Config()
+    except ImportError as exc:
+        raise ImportError(
+            "Databricks backend requires 'databricks-sdk'. "
+            "Please install it with `pip install databricks-sdk` or switch "
+            "to local mode (BIANOR_BACKEND=local)."
+        ) from exc
