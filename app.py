@@ -47,7 +47,8 @@ def setup_app():
     cfg = get_databricks_config()
     return "Bianor", cfg, app
 
-from cache import cache
+from cache import cache, clear_cache
+
 
 load_verify_env()
 APP_NAME, cfg, app = setup_app()
@@ -463,5 +464,25 @@ def __run_quick_demo(training_data):
     )
 
 if __name__ == "__main__":
-    debug = os.getenv("DEBUG_MODE", "false").lower() in ("true", "1")
-    app.run(debug=debug, port=os.getenv("SERVER_PORT", None))
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run the Bianor Dash application.")
+    parser.add_argument(
+        "--clear-cache",
+        action="store_true",
+        help="Clear the configured CACHE_DIR before starting the application.",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        dest="debug_mode",
+        default=os.getenv("DEBUG_MODE", "false").lower() in ("true", "1"),
+        help="Run Dash in debug mode.",
+    )
+    cli_args, _ = parser.parse_known_args()
+    if cli_args.clear_cache and os.getenv("WERKZEUG_RUN_MAIN") != "true":
+        clear_cache()
+
+    debug_mode = cli_args.debug_mode
+    port=os.getenv("SERVER_PORT", None)
+    app.run(debug=debug_mode, port=port)
