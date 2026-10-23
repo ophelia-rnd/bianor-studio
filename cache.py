@@ -1,6 +1,8 @@
 import os
 from flask_caching import Cache
 
+import shutil
+
 timeout = int(os.getenv("CACHE_DEFAULT_TIMEOUT", 300))
 cache_dir = os.getenv("CACHE_DIR", ".bianor_cache")
 
@@ -11,3 +13,9 @@ cache = Cache(
         "CACHE_DEFAULT_TIMEOUT": timeout,
     }
 )
+
+
+def clear_cache():
+    """Clears the configured CACHE_DIR."""
+    shutil.rmtree(cache_dir, ignore_errors=True)
+    os.makedirs(cache_dir, exist_ok=True)
