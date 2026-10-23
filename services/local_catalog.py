@@ -6,7 +6,7 @@ from services.backend import catalog_path
 _CACHE = None
 
 _REPRESENTATION_COLUMNS = ["ID", "NAME", "SOM_MODEL_LOCATION", "FEATURES_LOCATION"]
-_PROJECTION_COLUMNS = ["NAME", "SAMPLES_LOCATION", "MARKER_DICT"]
+_PROJECTION_COLUMNS = ["NAME", "SAMPLES_LOCATION", "MARKER_DICT", "META_COLUMNS"]
 _PROJECTION_MAPPING_COLUMNS = ["REPRESENTATION_NAME", "NAME", "SAMPLES_LOCATION", "MARKER_DICT"]
 _PREDICTION_COLUMNS = ["ID", "NAME", "PREDICTION_LOCATION"]
 _PREDICTION_MAPPING_COLUMNS = ["REPRESENTATION_NAME", "NAME", "PREDICTION_LOCATION"]
@@ -92,6 +92,7 @@ def projection_layers_by_representation(representation_id):
             "NAME": row.get("name"),
             "SAMPLES_LOCATION": row.get("samples_location"),
             "MARKER_DICT": row.get("marker_dict"),
+            "META_COLUMNS": row.get("meta_columns"),
         }
         for row in records
     ]
