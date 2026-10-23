@@ -34,7 +34,7 @@ def load_verify_env():
     assert os.getenv('BIANOR_DATABRICKS_SCHEMA'), "BIANOR_DATABRICKS_SCHEMA must be set in environment."
 
 def setup_app():
-    from services.backend import is_local
+    from services.backend import get_databricks_config
     app = Dash(
         __name__,
         use_pages=True,
@@ -44,7 +44,7 @@ def setup_app():
         )],
         suppress_callback_exceptions=True
     )
-    cfg = Config() if not is_local() else None
+    cfg = get_databricks_config()
     return "Bianor", cfg, app
 
 from cache import cache
