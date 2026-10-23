@@ -12,8 +12,9 @@ dash.register_page(
 
 title_header = "Welcome to Bianor"
 taglines = [
-    "Bianor fuses **data visualization** and **contextualization** with **anomaly detection**.",
-    "Visualize enhanced Self-Organizing Maps (SOM), project historical patterns, and identify points of interest like anomalies directly from your Databricks catalog."
+    "Bianor fuses **data visualization** and **contextualization**.",
+    "Train and observe the representation of high-dimensional datasets that are challenging to visualize otherwise — through Self-Organizing Maps (SOM) — revealing data topology to put complex observations in visual context.",
+    "Visualize enhanced SOM displays, project historical patterns, and identify points of interest like anomalies directly from your Databricks catalog or from local data.",
 ]
 
 layout = html.Div(
@@ -21,6 +22,7 @@ layout = html.Div(
         html.H3(title_header, className="mb-4"),
         dcc.Markdown(taglines[0]),
         dcc.Markdown(taglines[1]),
+        dcc.Markdown(taglines[2]),
         html.Div(
             className="d-flex gap-3",
             style={"marginTop": "2rem", "flex-wrap": "wrap"},

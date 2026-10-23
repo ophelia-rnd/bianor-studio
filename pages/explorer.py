@@ -1,5 +1,6 @@
 import json
 import dash
+import pandas as pd
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 
@@ -520,20 +521,29 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_compo
         else:
             projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))
             for i, config_record in projection_configs.iterrows():
-                X = fetch_features_by_join(table=selected_map["FEATURES_LOCATION"],
+                X_numeric = fetch_features_by_join(table=selected_map["FEATURES_LOCATION"],
                                            join_table=config_record["SAMPLES_LOCATION"])
-                X.set_index("id", drop=True, inplace=True)
+                X_numeric.set_index("id", drop=True, inplace=True)
+                X_numeric = X_numeric.copy()
+
+                meta_cols_raw = config_record.get("META_COLUMNS")
+                if pd.notna(meta_cols_raw):
+                    meta_cols = [c.strip() for c in meta_cols_raw.split(",") if c.strip()]
+                    drop_cols = [c for c in meta_cols if c in X_numeric.columns]
+                    if drop_cols:
+                        X_numeric.drop(columns=drop_cols, inplace=True)
+                
                 scaler = load_scaler(som_rep_model_loc)
-                pond.attraction_layer(scaler.transform(X), name=config_record["NAME"],
+                pond.attraction_layer(scaler.transform(X_numeric), name=config_record["NAME"],
                                       marker=json.loads(config_record["MARKER_DICT"]))
 
     selected_ids = [row.get("id") for row in (selected_rows or []) if row.get("id") is not None]
     if selected_prediction and selected_ids:
-        X = fetch_features(table=selected_map["FEATURES_LOCATION"], ids=selected_ids)
-        X.set_index("id", drop=True, inplace=True)
+        X_numeric = fetch_features(table=selected_map["FEATURES_LOCATION"], ids=selected_ids)
+        X_numeric.set_index("id", drop=True, inplace=True)
         scaler = load_scaler(som_rep_model_loc)
         marker = dict(color="white", size=22, symbol="bowtie")
-        pond.attraction_layer(scaler.transform(X), marker=marker)
+        pond.attraction_layer(scaler.transform(X_numeric), marker=marker)
 
     fig = pond.visualize(show_fig=False, title=None)
     fig = style_figure(fig)

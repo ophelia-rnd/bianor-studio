@@ -221,6 +221,7 @@ __marimo__/
 .idea
 .DS_Store
 .local
+AGENTS.md
 
 
 # Bianor application

@@ -27,9 +27,11 @@ class FeatureService(DataService):
             right = cls._require_id(super().read_local_table(join_table_name), join_table_name)
             left = left.copy()
             left["_join_id"] = left["id"].astype(str)
-            right = right[["id"]].drop_duplicates().copy()
+            right = right.drop_duplicates(subset=["id"]).copy()
             right["_join_id"] = right["id"].astype(str)
-            return left.merge(right[["_join_id"]], on="_join_id").drop(columns=["_join_id"])
+            right_cols = [c for c in right.columns if c not in ["id", "_join_id"] and c not in left.columns]
+            merged = left.merge(right[["_join_id"] + right_cols], on="_join_id")
+            return merged.drop(columns=["_join_id"])
         sqls = """
                SELECT t.* FROM IDENTIFIER(:table) t
                  INNER JOIN IDENTIFIER(:join_table) tj ON t.id = tj.id
