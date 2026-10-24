@@ -46,8 +46,8 @@ flowchart TD
     pip install minisom-representation bianor-databricks-kit
     ```
 
-    * [`minisom-representation`](https://github.com/ophelia-rnd/minisom-representation): Trains 2D Self-Organizing Map (SOM) representations on high-dimensional data.
-    * [`bianor-databricks-kit`](https://pypi.org/project/bianor-databricks-kit/): Assists in creating metadata tables and linking registered models, projection layers, and predictions to Bianor.
+    * [`ophelia-rnd/minisom-representation`](https://github.com/ophelia-rnd/minisom-representation): Trains 2D Self-Organizing Map (SOM) representations on high-dimensional data.
+    * [`ophelia-rnd/bianor-databricks-kit`](https://pypi.org/project/bianor-databricks-kit/): Assists in creating metadata tables and linking registered models, projection layers, and predictions to Bianor.
 
     ---
 
@@ -234,7 +234,7 @@ flowchart TD
 === ":material-laptop: Local Run"
 
     !!! tip "Quick Start Tip"
-        Instead of stepping through the guide below, you can run [`bianor_local_catalog/notebooks/demo_iris.ipynb`](https://github.com/ophelia-rnd/bianor-databricks/blob/main/bianor_local_catalog/notebooks/demo_iris.ipynb) to train, save, and register a demo Iris representation model and sample dataset in one go.
+        Instead of stepping through the guide below, you can run [`bianor_local_catalog/notebooks/demo_iris.ipynb`](https://github.com/ophelia-rnd/bianor/blob/main/bianor_local_catalog/notebooks/demo_iris.ipynb) to train, save, and register a demo Iris representation model and sample dataset in one go.
 
     ### 1. Modeling
 

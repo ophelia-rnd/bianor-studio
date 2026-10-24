@@ -4,8 +4,8 @@ site_author: Máté Balogh
 site_url: https://bianor.ophelia-rnd.dev
 copyright: "&copy; 2026 Bianor"
 
-repo_name: ophelia-rnd/bianor-databricks
-repo_url: https://github.com/ophelia-rnd/bianor-databricks
+repo_name: ophelia-rnd/bianor
+repo_url: https://github.com/ophelia-rnd/bianor
 
 theme:
   name: material
@@ -73,8 +73,9 @@ markdown_extensions:
 nav:
   - Home:
       - Overview: index.md
-      - Core Features: features.md
+      - Quick Start: quickstart.md
   - "Community Edition":
+      - Core Features: features.md
       - Prerequisites: individual/prerequisites.md
       - Launch Bianor: individual/launch.md
       - Modeling & Configuration: individual/modeling.md

@@ -1,7 +1,5 @@
 # Core Features
 
-## Interactive Representation Explorer
-
 The core of Bianor is the **Map Explorer**, designed to visualize trained Self-Organizing Map (SOM) topologies, projections, and predictions with responsive layer controls.
 
 
@@ -45,21 +43,10 @@ The core of Bianor is the **Map Explorer**, designed to visualize trained Self-O
 
     ![Predictions](assets/screensaves/view_prediction.png)
 
-
----
-
-## Standard ML / Data Science Workflow in Databricks & MLflow
-
-- **Unity Catalog Native**: Directly queries tables, views, and feature sets stored under catalog schemas (`<catalog>.<schema>`).
-- **SQL Warehouse Powered**: Analytical queries are executed through dedicated Databricks SQL Warehouses for high-performance retrieval.
-- **Service Principal Security**: Fine-grained access control managed through standard Databricks permissions (`USE CATALOG`, `USE SCHEMA`, `SELECT`, `EXECUTE`).
-- **Decoupled Model Lifecycle**: Train models in Databricks or local notebooks using [`minisom-representation`](https://github.com/ophelia-rnd/minisom-representation), log and version them in MLflow, and link them to Bianor without rebuilding or redeploying the app.
-- **Extensible Bianor Schema**: Metadata tables track representations, feature locations, projection layers, and prediction outputs.
-
 ---
 
 ## Next Steps
 
-- Check the [Prerequisites](individual/prerequisites.md) to set up Bianor in your Databricks workspace.
+- Check the [Prerequisites](individual/prerequisites.md) to set up Bianor in your workspace.
 - Follow the [Launch Guide](individual/launch.md) to deploy your application.
 - Learn how to train and link models in [Modeling & Configuration](individual/modeling.md).

@@ -48,8 +48,9 @@ flowchart TD
 
     ---
 
-    Designed for individual **researchers**, **data scientists**, and **curious minds**. Explore high-dimensional representations.
+    Designed for **curious minds** and **data teams** to explore high-dimensional data in 2D.
 
+    * [Quick Start](quickstart.md)
     * [Core Features](features.md)
     * [Prerequisites](individual/prerequisites.md)
     * [Launch Bianor](individual/launch.md)
@@ -59,7 +60,7 @@ flowchart TD
 
     ---
 
-    Designed for **organizations** and **data teams** with established Databricks workspaces.
+    Designed for advanced workflows and custom requirements.
 
     * For early access or assistance, reach out at [hello@ophelia-rnd.dev](mailto:hello@ophelia-rnd.dev)
 
