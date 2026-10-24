@@ -1,0 +1,21 @@
+<div class="md-copyright ophelia-custom-copyright">
+  <div class="ophelia-footer-branding">
+    <a href="https://ophelia-rnd.dev" target="_blank" rel="noopener" title="Ophelia R&D">
+      <img src="{{ 'assets/footer/ophelia_rnd_logo_dark.png' | url }}" alt="Ophelia R&D" />
+    </a>
+  </div>
+  <div class="ophelia-footer-notice">
+    {% if config.copyright %}
+      <span class="md-copyright__highlight">
+        {{ config.copyright }}
+      </span>
+      <span class="footer-separator">&bull;</span>
+    {% endif %}
+    <span>
+      Made with
+      <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+        Material for MkDocs
+      </a>
+    </span>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+site_name: Bianor Documentation
+site_description: High-dimensional observations mapped to visual contexts in 2D
+site_author: Máté Balogh
+site_url: https://bianor.ophelia-rnd.dev
+copyright: "&copy; 2026 Bianor"
+
+repo_name: ophelia-rnd/bianor
+repo_url: https://github.com/ophelia-rnd/bianor
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/bianor_branding_dark.png
+  favicon: assets/bianor_branding_dark.png
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - javascripts/tabs-toc.js
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home:
+      - Overview: index.md
+      - Quick Start: quickstart.md
+  - "Community Edition":
+      - Core Features: features.md
+      - Prerequisites: individual/prerequisites.md
+      - Launch Bianor: individual/launch.md
+      - Modeling & Configuration: individual/modeling.md

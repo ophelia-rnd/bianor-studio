@@ -1,0 +1,178 @@
+/* Header background customization to #11171D */
+.md-header {
+  background-color: #11171D !important;
+  color: #ffffff !important;
+}
+
+/* Ensure navigation active/focus items have distinct highlight color in light mode */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #3f51b5;
+  --md-accent-fg-color: #7e57c2;
+  --md-typeset-a-color: #3f51b5;
+}
+
+[data-md-color-scheme="default"] .md-nav__link--active,
+[data-md-color-scheme="default"] .md-nav__link:focus,
+[data-md-color-scheme="default"] .md-nav__link:hover {
+  color: var(--md-accent-fg-color, #7e57c2) !important;
+}
+
+/* Header logo sizing */
+.md-header__button.md-logo img {
+  height: 28px;
+  width: auto;
+}
+
+/* Keep header title container as a spacer between brand and tools */
+.md-header__title {
+  flex-grow: 1 !important;
+  visibility: hidden !important;
+}
+
+/* Expand Git repository panel width so text is not trimmed */
+.md-header__source {
+  margin-left: 0.8rem;
+  max-width: none !important;
+}
+
+.md-source {
+  max-width: none !important;
+  width: auto !important;
+}
+
+.md-source__repository {
+  max-width: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+}
+
+/* Home hero branding light/dark switching */
+[data-md-color-scheme="default"] .hero-dark-only {
+  display: none !important;
+}
+
+[data-md-color-scheme="slate"] .hero-light-only {
+  display: none !important;
+}
+
+/* Horizontally spread footer */
+.md-footer-meta__inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+.ophelia-custom-copyright {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 1.5rem !important;
+  padding: 0.6rem 0 !important;
+}
+
+/* Footer branding: slightly larger */
+.ophelia-footer-branding {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ophelia-footer-branding img {
+  height: 28px;
+  width: auto;
+  opacity: 0.95;
+}
+
+.ophelia-footer-branding img:hover {
+  opacity: 1;
+}
+
+/* Footer notice: smaller, subtle */
+.ophelia-footer-notice {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.01em;
+  color: var(--md-footer-fg-color--lighter, #788094);
+}
+
+.ophelia-footer-notice a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ophelia-footer-notice a:hover {
+  color: var(--md-typeset-a-color, #7e57c2);
+}
+
+.footer-separator {
+  margin: 0 0.15rem;
+  opacity: 0.4;
+}
+
+@media screen and (max-width: 45em) {
+  .ophelia-custom-copyright {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.6rem !important;
+  }
+}
+
+/* Mermaid flowchart styling: node padding & cluster header */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node polygon {
+  rx: 6px !important;
+  ry: 6px !important;
+}
+
+.mermaid .node .label {
+  line-height: 1.4 !important;
+}
+
+.mermaid .cluster rect {
+  rx: 8px !important;
+  ry: 8px !important;
+  stroke-width: 1.5px !important;
+}
+
+/* Subgraph container themed borders and subtle backdrop */
+#DBR > rect,
+.mermaid .cluster#DBR rect {
+  stroke: #FF3621 !important;
+  stroke-width: 1.5px !important;
+}
+
+[data-md-color-scheme="default"] #DBR > rect,
+[data-md-color-scheme="default"] .mermaid .cluster#DBR rect {
+  fill: rgba(255, 54, 33, 0.03) !important;
+}
+
+[data-md-color-scheme="slate"] #DBR > rect,
+[data-md-color-scheme="slate"] .mermaid .cluster#DBR rect {
+  fill: rgba(255, 54, 33, 0.05) !important;
+}
+
+#BIANOR > rect,
+.mermaid .cluster#BIANOR rect {
+  stroke: #6366f1 !important;
+  stroke-width: 1.5px !important;
+}
+
+[data-md-color-scheme="default"] #BIANOR > rect,
+[data-md-color-scheme="default"] .mermaid .cluster#BIANOR rect {
+  fill: rgba(99, 102, 241, 0.03) !important;
+}
+
+[data-md-color-scheme="slate"] #BIANOR > rect,
+[data-md-color-scheme="slate"] .mermaid .cluster#BIANOR rect {
+  fill: rgba(99, 102, 241, 0.05) !important;
+}
+
