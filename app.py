@@ -479,10 +479,24 @@ if __name__ == "__main__":
         default=os.getenv("DEBUG_MODE", "false").lower() in ("true", "1"),
         help="Run Dash in debug mode.",
     )
+    parser.add_argument(
+        "--host",
+        dest="host",
+        default=os.getenv("SERVER_HOST", "0.0.0.0"),
+        help="Host address to bind the server to (default: 0.0.0.0).",
+    )
+    parser.add_argument(
+        "--port",
+        dest="port",
+        type=int,
+        default=int(os.getenv("SERVER_PORT")) if os.getenv("SERVER_PORT") else None,
+        help="Port to bind the server to (default: 8050).",
+    )
     cli_args, _ = parser.parse_known_args()
     if cli_args.clear_cache and os.getenv("WERKZEUG_RUN_MAIN") != "true":
         clear_cache()
 
     debug_mode = cli_args.debug_mode
-    port=os.getenv("SERVER_PORT", None)
-    app.run(debug=debug_mode, port=port)
+    host = cli_args.host
+    port = cli_args.port
+    app.run(host=host, debug=debug_mode, port=port)
