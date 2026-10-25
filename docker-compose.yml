@@ -1,0 +1,24 @@
+services:
+  bianor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bianor
+    ports:
+      - "${SERVER_PORT:-8050}:8050"
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8050
+      - BIANOR_BACKEND=${BIANOR_BACKEND:-local}
+      - BIANOR_LOCAL_CATALOG_ROOT=/app/bianor_local_catalog
+      - CACHE_DIR=/app/.bianor_cache
+      - CACHE_DEFAULT_TIMEOUT=${CACHE_DEFAULT_TIMEOUT:-480}
+      - DEBUG_MODE=${DEBUG_MODE:-false}
+    env_file:
+      - .env
+    volumes:
+      # Mount local catalog to access/persist datasets and SOM models
+      - ${BIANOR_LOCAL_CATALOG_ROOT:-./bianor_local_catalog}:/app/bianor_local_catalog
+      # Mount cache directory to persist cached map representations across restarts
+      - ${CACHE_DIR:-./.bianor_cache}:/app/.bianor_cache
+    restart: unless-stopped

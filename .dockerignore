@@ -1,0 +1,35 @@
+# Version control
+.git
+.gitignore
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Secret and environment configuration files
+.env
+.env.*
+!.env.*.example
+
+# App cache & local files
+.bianor_cache/
+.DS_Store
+.idea/
+.vscode/
+
+# Documentation builds
+site/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
