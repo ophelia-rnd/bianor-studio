@@ -13,8 +13,8 @@ dash.register_page(
 title_header = "Welcome to Bianor"
 taglines = [
     "Bianor fuses **data visualization** and **contextualization**.",
-    "Train and observe the representation of high-dimensional datasets that are challenging to visualize otherwise — through Self-Organizing Maps (SOM) — revealing data topology to put complex observations in visual context.",
-    "Visualize enhanced SOM displays, project historical patterns, and identify points of interest like anomalies directly from your Databricks catalog or from local data.",
+    "Observe the representation of high-dimensional datasets that are challenging to visualize otherwise. Through two-dimensional landscapes, Bianor reveals data topology and puts complex observations in visual context.",
+    "Train and visualize enhanced Self-Organizing Map (SOM) displays, project historical patterns, and identify points of interest directly from local data or from your Databricks catalog.",
 ]
 
 layout = html.Div(
