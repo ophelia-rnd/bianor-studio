@@ -1,5 +1,6 @@
 import json
 import dash
+import numpy as np
 import pandas as pd
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
@@ -19,7 +20,7 @@ dash.register_page(
 
 from cache import cache
 from services.backend import get_databricks_config
-from utils.demo import is_demo_id, is_demo_model, apply_demo_projections
+from utils.demo import is_demo_id, is_demo_model
 
 cfg = get_databricks_config()
 
@@ -31,12 +32,13 @@ def create_plot_config():
         pad_layer_active=True,
         pad_layer_nogap_active=True,
         petal_layer_active=False,
+        projection_qe_color_active=False,
     )
     return plot_config
 
 
 layout = lambda: html.Div(
-    className="d-flex flex-column h-100 overflow-hidden", style={"margin": "-4.5rem 0 0 -9rem"},
+    className="d-flex flex-column h-100 overflow-hidden explorer-page", style={"margin": "-4.7rem 0 0 -8.4rem"},
     children=[
         dcc.Store(id="plot_config", data=create_plot_config()),
         html.Div(
@@ -44,62 +46,78 @@ layout = lambda: html.Div(
             children=[
                 html.Div(
                     className="d-flex flex-column",
-                    style={"flex": "1 1 0", "minWidth": "0", "gap": "2rem"},
+                    style={"flex": "1 1 0", "minWidth": "0", "gap": "1.25rem", "paddingTop": "0.65rem"},
                     children=[
                         html.Div(
-                            className="d-flex gap-3 rounded rounded-lg text-white mt-3",
-                            style={"flex-grow": "0", "background": "#2b263a", "padding": "1rem .9rem",
-                                   "width": "max-content", "position": "relative",
-                                   "box-shadow": "inset 0 -5px 15px 1px #1d1a27"},
+                            className="observer-chrome observer-view-bar d-flex gap-3 rounded-3 text-white",
                             children=[
                                 html.Span(
                                     "View & Layers",
-                                    className="text-white-50 p-3 rounded small",
-                                    style={"z-index": "0", "cursor": "default", "position": "absolute", "top": "-25px",
-                                           "left": "0", "right": "0", "margin": "auto", "width": "fit-content",
-                                           "background": "#2b263a"}
+                                    className="observer-chrome-label text-white-50 px-2 py-0 rounded small",
                                 ),
                                 html.Div(
-                                    className="d-flex gap-1",
-                                    style={"z-index": "1"},
+                                    className="view-controls",
                                     children=[
-                                        dbc.Button(
-                                            id="btn-view-topology",
-                                            className="d-flex gap-1 align-items-center p-3 py-2 rounded-4 border-0",
-                                            n_clicks=0,
-                                            color=None,
-                                            size="sm",
-                                            children=[html.I(className="bi bi-map fs-5 me-1"), "Topology"],
+                                        html.Div(
+                                            id="view-switcher",
+                                            className="view-switcher view-topology",
+                                            children=[
+                                                html.Div(className="view-switcher-slider"),
+                                                dbc.Button(
+                                                    id="btn-view-topology",
+                                                    className="d-flex gap-1 align-items-center px-3 py-2 border-0",
+                                                    n_clicks=0,
+                                                    color=None,
+                                                    size="sm",
+                                                    children=[html.I(className="bi bi-map me-1"), "Data Landscape"],
+                                                ),
+                                                dbc.Button(
+                                                    id="btn-view-projections",
+                                                    className="d-flex gap-1 align-items-center px-3 py-2 border-0",
+                                                    n_clicks=0,
+                                                    color=None,
+                                                    size="sm",
+                                                    children=[html.I(className="bi bi-clock-history me-1"),
+                                                              "Historical Projections"],
+                                                ),
+                                                dbc.Button(
+                                                    id="btn-view-components",
+                                                    className="d-flex gap-1 align-items-center px-3 py-2 border-0",
+                                                    n_clicks=0,
+                                                    color=None,
+                                                    size="sm",
+                                                    children=[html.I(className="bi bi-stack me-1"), "Components"],
+                                                ),
+                                            ]
                                         ),
-                                        dbc.Button(
-                                            id="btn-view-projections",
-                                            className="d-flex gap-1 align-items-center p-3 py-2 rounded-4 border-0",
-                                            n_clicks=0,
-                                            color=None,
-                                            size="sm",
-                                            children=[html.I(className="bi bi-clock-history fs-5 me-1"),
-                                                      "Historical Patterns"],
+                                        html.Div(
+                                            id="components-selector-container",
+                                            className="components-selector d-none",
+                                            style={"display": "none"},
+                                            children=[
+                                                dcc.Dropdown(
+                                                    id="drp-component-idx",
+                                                    className="components-selector-dropdown",
+                                                    clearable=False,
+                                                    searchable=False,
+                                                    placeholder="Feature...",
+                                                    optionHeight=32,
+                                                    style={"minWidth": "200px", "fontSize": ".8rem", "color": "#1b1824", "cursor": "pointer"},
+                                                ),
+                                            ]
                                         ),
-                                        dbc.Button(
-                                            id="btn-view-components",
-                                            className="d-flex gap-1 align-items-center p-3 py-2 rounded-4 border-0",
-                                            n_clicks=0,
-                                            color=None,
-                                            size="sm",
-                                            children=[html.I(className="bi bi-stack fs-5 me-1"), "Components"],
-                                        ),
-                                    ] + registry.extra_view_buttons()
+                                    ]
                                 ),
-                                html.Div(style={"height": "100%", "width": "2px", "background": "#37334a",
-                                                "marginLeft": "10px"}),
+                            ] + registry.extra_view_buttons() + [
+                                html.Div(className="observer-view-bar-divider"),
                                 dbc.Button(
                                     id="btn-layer-rhizome",
                                     n_clicks=0,
                                     className="d-flex align-items-center text-white rounded border-0",
-                                    style={"padding": ".5rem", "--bs-text-opacity": ".3"},
+                                    style={"padding": ".35rem", "--bs-text-opacity": ".3"},
                                     color=None,
                                     size="sm",
-                                    children=[html.I(className="bi bi-bezier2 fs-5")],
+                                    children=[html.I(className="bi bi-bezier2")],
                                 ),
                                 dbc.Tooltip(
                                     "Topological connections",
@@ -110,10 +128,10 @@ layout = lambda: html.Div(
                                     id="btn-layer-pad",
                                     n_clicks=0,
                                     className="d-flex align-items-center text-white rounded border-0",
-                                    style={"padding": ".5rem", "--bs-text-opacity": ".3"},
+                                    style={"padding": ".35rem", "--bs-text-opacity": ".3"},
                                     color=None,
                                     size="sm",
-                                    children=[html.I(className="bi bi-leaf-fill fs-5")],
+                                    children=[html.I(className="bi bi-leaf-fill")],
                                 ),
                                 dbc.Tooltip(
                                     "Neighbor distances",
@@ -124,32 +142,15 @@ layout = lambda: html.Div(
                                     id="btn-layer-petal",
                                     n_clicks=0,
                                     className="d-flex align-items-center text-white rounded border-0",
-                                    style={"padding": ".5rem", "--bs-text-opacity": ".3"},
+                                    style={"padding": ".35rem", "--bs-text-opacity": ".3"},
                                     color=None,
                                     size="sm",
-                                    children=[html.I(className="bi bi-flower1 fs-5")],
+                                    children=[html.I(className="bi bi-flower1")],
                                 ),
                                 dbc.Tooltip(
                                     "Training activations",
                                     target="btn-layer-petal",
                                     placement="bottom",
-                                ),
-                                html.Div(
-                                    id="components-selector-container",
-                                    className="align-items-center gap-2 d-none",
-                                    style={"display": "none"},
-                                    children=[
-                                        html.Div(style={"height": "100%", "width": "2px", "background": "#37334a",
-                                                        "marginLeft": "6px", "marginRight": "6px"}),
-                                        html.Span("Component:", className="text-white-50 small fw-semibold text-nowrap"),
-                                        dcc.Dropdown(
-                                            id="drp-component-idx",
-                                            clearable=False,
-                                            searchable=True,
-                                            placeholder="Select component...",
-                                            style={"minWidth": "210px", "maxWidth": "320px", "fontSize": ".85rem", "color": "#111827", "cursor": "pointer"},
-                                        ),
-                                    ]
                                 ),
                             ]
                         ),
@@ -158,9 +159,22 @@ layout = lambda: html.Div(
                             children=[
                                 html.Div(
                                     id="observer-toolbar",
-                                    className="d-flex flex-column gap-2 alig-items-center rounded",
-                                    style={"box-shadow": "inset 0 -5px 10px 1px #1d1a27"},
+                                    className="observer-chrome d-flex flex-column gap-2 align-items-center rounded-3",
                                     children=[
+                                        dbc.Button(
+                                            id="btn-projection-qe-color",
+                                            n_clicks=0,
+                                            className="text-white rounded border-0",
+                                            style={"--bs-text-opacity": ".5"},
+                                            size="sm",
+                                            color=None,
+                                            children=[html.I(className="bi bi-rulers")],
+                                        ),
+                                        dbc.Tooltip(
+                                            "Show distances from map",
+                                            target="btn-projection-qe-color",
+                                            placement="right",
+                                        ),
                                         dbc.Button(
                                             id="btn-layer-pad-nogap",
                                             n_clicks=0,
@@ -175,23 +189,29 @@ layout = lambda: html.Div(
                                             target="btn-layer-pad-nogap",
                                             placement="right",
                                         ),
-                                        dbc.Button(
-                                            id="btn-layer-rhizome-violationonly",
-                                            n_clicks=0,
-                                            className="text-white rounded border-0",
-                                            style={"--bs-text-opacity": ".5"},
-                                            size="sm",
-                                            color=None,
-                                            children=[html.I(className="bi bi-exclamation-triangle-fill")],
-                                        ),
-                                        dbc.Tooltip(
-                                            "Topology violations",
-                                            target="btn-layer-rhizome-violationonly",
-                                            placement="right",
+                                        html.Div(
+                                            id="btn-layer-rhizome-violationonly-wrap",
+                                            style={"display": "none"},
+                                            children=[
+                                                dbc.Button(
+                                                    id="btn-layer-rhizome-violationonly",
+                                                    n_clicks=0,
+                                                    className="text-white rounded border-0",
+                                                    style={"--bs-text-opacity": ".5"},
+                                                    size="sm",
+                                                    color=None,
+                                                    children=[html.I(className="bi bi-exclamation-triangle-fill")],
+                                                ),
+                                                dbc.Tooltip(
+                                                    "Focus on violating connections",
+                                                    target="btn-layer-rhizome-violationonly",
+                                                    placement="right",
+                                                ),
+                                            ]
                                         ),
                                     ]
                                 ),
-                                html.Div(id='observer-plot-container', style={"flex": "1 1 0", "minWidth": "0", "height": "100%"}),
+                                html.Div(id='observer-plot-container', className="observer-plot-container"),
                             ]
                         )
                     ]
@@ -287,8 +307,8 @@ def create_base_pond(basin):
     from lilypond.pond_base_style import PondBaseStyle
     pond_style = PondBaseStyle(
         water_colorscale=[
-            [0.0, "#351c5e"],
-            [1.0, "#040916"],
+            [0.0, "#1d2127"],
+            [1.0, "#10141a"],
         ],
         rhizome_colorscale=[
             [0.0, "#f59e0b"],
@@ -313,24 +333,14 @@ def create_base_pond(basin):
 
 
 @dash.callback(
-    Output("btn-view-topology", "style"),
-    Output("btn-view-projections", "style"),
-    Output("btn-view-components", "style"),
+    Output("view-switcher", "className"),
     Input("plot_config", "data"),
 )
 def __update_btn_view_style(current_config):
-    view = current_config.get("view", None)
-    view_shades = {
-        "topology": "#7c3aed",
-        "projections": "#dc2626",
-        "components": "#ec4899",
-    }
-    buttons = ["topology", "projections", "components"]
-    styles = [
-        {"background": view_shades[b], "color": "white"} if view == b else {"background": "none", "color": "grey"}
-        for b in buttons
-    ]
-    return tuple(styles)
+    view = (current_config or {}).get("view", "topology")
+    if view not in ("topology", "projections", "components"):
+        view = "topology"
+    return f"view-switcher view-{view}"
 
 @dash.callback(
     Output("btn-layer-rhizome", "style"),
@@ -338,13 +348,17 @@ def __update_btn_view_style(current_config):
     Output("btn-layer-pad", "style"),
     Output("btn-layer-petal", "style"),
     Output("btn-layer-pad-nogap", "style"),
+    Output("btn-projection-qe-color", "style"),
+    Output("btn-layer-rhizome-violationonly-wrap", "style"),
     Input("plot_config", "data"),
 )
 def __update_btn_layer_style(current_config):
+    current_config = current_config or {}
     active_states = [current_config.get(f"{k}_active") for k in
-                     ["rhizome_layer", "rhizome_layer_violationonly", "pad_layer", "petal_layer", "pad_layer_nogap"]]
+                     ["rhizome_layer", "rhizome_layer_violationonly", "pad_layer", "petal_layer", "pad_layer_nogap", "projection_qe_color"]]
     styles = [{"--bs-text-opacity": "1"} if s else {"--bs-text-opacity": ".3"} for s in active_states]
-    return tuple(styles)
+    rhizome_wrap = {} if current_config.get("rhizome_layer_active") else {"display": "none"}
+    return (*styles, rhizome_wrap)
 
 
 # ----
@@ -404,6 +418,17 @@ def __handle_btn_layer(plot_config, _):
     plot_config.update({"rhizome_layer_violationonly_active": not is_active})
     return plot_config
 
+@dash.callback(
+    Output("plot_config", "data", allow_duplicate=True),
+    State("plot_config", "data"),
+    Input("btn-projection-qe-color", "n_clicks"),
+    prevent_initial_call=True
+)
+def __handle_btn_projection_qe_color(plot_config, _):
+    is_active = plot_config.get("projection_qe_color_active", False)
+    plot_config.update({"projection_qe_color_active": not is_active})
+    return plot_config
+
 
 # ----
 
@@ -416,6 +441,8 @@ def __handle_btn_layer(plot_config, _):
 def __handle_btn_layer(plot_config, _):
     is_active = plot_config.get("rhizome_layer_active", False)
     plot_config.update({"rhizome_layer_active": not is_active})
+    if is_active:
+        plot_config.update({"rhizome_layer_violationonly_active": False})
     return plot_config
 
 @dash.callback(
@@ -452,7 +479,7 @@ def __handle_btn_layer(plot_config, _):
 def __update_component_selector(selected_map, plot_config, current_component_idx):
     view = (plot_config or {}).get("view")
     if not selected_map or view != "components":
-        return [], current_component_idx, {"display": "none"}, "align-items-center gap-2 d-none"
+        return [], current_component_idx, {"display": "none"}, "components-selector d-none"
 
     som_rep_model_loc = selected_map.get("SOM_MODEL_LOCATION")
     som_rep_model = load_representation(som_rep_model_loc)
@@ -475,7 +502,7 @@ def __update_component_selector(selected_map, plot_config, current_component_idx
     ]
 
     val = current_component_idx if (current_component_idx is not None and current_component_idx < n_components) else 0
-    return options, val, {"display": "flex"}, "align-items-center gap-2 d-flex"
+    return options, val, {"display": "flex"}, "components-selector d-flex"
 
 @dash.callback(
     Output('observer-plot-container', 'children'),
@@ -486,10 +513,19 @@ def __update_component_selector(selected_map, plot_config, current_component_idx
     Input("observer-table", "selectedRows")
 )
 def __update_plot(selected_map, selected_prediction, plot_config, selected_component_idx, selected_rows):
-    if not selected_map: return html.Span("Select a representation to be visualized.", className="text-white-50")
+    if not selected_map:
+        return html.Div(
+            className="observer-empty",
+            children=[
+                html.I(className="bi bi-map observer-empty-icon"),
+                html.Span("Select a representation", className="observer-empty-title"),
+                html.Span("Choose one from the dropdown to visualize it here", className="observer-empty-hint"),
+            ],
+        )
 
     view = plot_config.get("view", None)
     comp_idx = selected_component_idx if selected_component_idx is not None else 0
+    qe_based_coloring = bool(plot_config.get("projection_qe_color_active", False))
 
     som_rep_model_loc = selected_map.get("SOM_MODEL_LOCATION")
     som_rep_model = load_representation(som_rep_model_loc)
@@ -516,11 +552,18 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_compo
             pond.rhizome_layer().pad_layer(gap="nogap").petal_layer()
 
     if view == "projections":
+        scaler = load_scaler(som_rep_model_loc)
+        projections = []
         if is_demo_id(selected_map.get("ID")):
-            apply_demo_projections(pond, load_model(som_rep_model_loc), load_scaler(som_rep_model_loc))
+            for proj in getattr(load_model(som_rep_model_loc), "projections", None) or []:
+                projections.append({
+                    "X": scaler.transform(proj["data"]),
+                    "name": proj["name"],
+                    "marker": proj["marker"],
+                })
         else:
             projection_configs = fetch_projection_layer_configs(selected_map.get("ID"))
-            for i, config_record in projection_configs.iterrows():
+            for _, config_record in projection_configs.iterrows():
                 X_numeric = fetch_features_by_join(table=selected_map["FEATURES_LOCATION"],
                                            join_table=config_record["SAMPLES_LOCATION"])
                 X_numeric.set_index("id", drop=True, inplace=True)
@@ -534,16 +577,28 @@ def __update_plot(selected_map, selected_prediction, plot_config, selected_compo
                         X_numeric.drop(columns=drop_cols, inplace=True)
                 
                 scaler = load_scaler(som_rep_model_loc)
-                pond.attraction_layer(scaler.transform(X_numeric), name=config_record["NAME"],
-                                      marker=json.loads(config_record["MARKER_DICT"]))
+                projections.append({
+                    "X": scaler.transform(X_numeric),
+                    "name": config_record["NAME"],
+                    "marker": json.loads(config_record["MARKER_DICT"]),
+                })
+        
+        if qe_based_coloring:
+            if projections:
+                X_merged = np.vstack([proj["X"] for proj in projections])
+                marker = dict(size=15, line=dict(width=2.5, color="black"))
+                pond.attraction_layer(X_merged, name="Projections", marker=marker, color_by_quantization_error=True)
+        else:
+            for proj in projections:
+                pond.attraction_layer(proj["X"], name=proj["name"], marker=proj.get("marker"))
 
     selected_ids = [row.get("id") for row in (selected_rows or []) if row.get("id") is not None]
     if selected_prediction and selected_ids:
         X_numeric = fetch_features(table=selected_map["FEATURES_LOCATION"], ids=selected_ids)
         X_numeric.set_index("id", drop=True, inplace=True)
         scaler = load_scaler(som_rep_model_loc)
-        marker = dict(color="white", size=22, symbol="bowtie")
-        pond.attraction_layer(scaler.transform(X_numeric), marker=marker)
+        marker = dict(size=22, symbol="bowtie", line=dict(width=2.5, color="black")) if qe_based_coloring else dict(color="white", size=22, symbol="bowtie")
+        pond.attraction_layer(scaler.transform(X_numeric), marker=marker, color_by_quantization_error=qe_based_coloring, colorbar_title="Quantization Error (⋈)")
 
     fig = pond.visualize(show_fig=False, title=None)
     fig = style_figure(fig)
