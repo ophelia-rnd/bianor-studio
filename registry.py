@@ -10,24 +10,24 @@ class AppRegistry:
         
         self.navbar_cta = lambda: dbc.Button(
             [
-                html.I(className="bi bi-lightning-charge-fill text-warning"),
+                html.I(className="bi bi-lightning-charge-fill"),
                 html.Span("Contact the Team for More", className="fw-semibold ms-1"),
             ],
             id={"type": "open-premium-modal", "index": "navbar"},
             n_clicks=0,
-            className="me-2 d-flex align-items-center text-decoration-none text-warning navbar-cta",
+            className="me-2 d-flex align-items-center text-decoration-none navbar-cta",
             color=None,
             size="sm",
         )
         
         self.about_page_callout = lambda: html.Div([
-            html.I(className="bi bi-lock-fill text-warning me-2"),
+            html.I(className="bi bi-lock-fill me-2", style={"color": "#5eead4"}),
             html.Span("Using Community Edition. ", className="text-white-50"),
             dbc.Button([
                 "Contact the Team"
-            ], id={"type": "open-premium-modal", "index": "about"}, n_clicks=0, color="link", className="text-warning text-decoration-none fw-bold p-0 align-baseline", style={"cursor": "pointer"}),
+            ], id={"type": "open-premium-modal", "index": "about"}, n_clicks=0, color="link", className="text-decoration-none fw-bold p-0 align-baseline", style={"cursor": "pointer", "color": "#5eead4"}),
             html.Span(" to unlock advanced features.", className="text-white-50")
-        ], className="mt-3 mb-4 p-3 small rounded", style={"backgroundColor": "rgba(255, 193, 7, 0.1)", "border": "1px solid rgba(255, 193, 7, 0.3)"})
+        ], className="mt-3 mb-4 p-3 small rounded", style={"backgroundColor": "rgba(45, 212, 191, 0.1)", "border": "1px solid rgba(45, 212, 191, 0.3)"})
 
         self.premium_modal = lambda: dbc.Modal(
             id="mdl-premium",
@@ -44,7 +44,8 @@ class AppRegistry:
                         html.A(
                             [html.I(className="bi bi-envelope-fill me-1"), "hello@ophelia-rnd.dev"],
                             href="mailto:hello@ophelia-rnd.dev?subject=Inquiry%20About%20Bianor%20Solutions",
-                            className="text-warning fw-bold text-decoration-none"
+                            className="fw-bold text-decoration-none",
+                            style={"color": "#00a088"},
                         )   
                     ], className="p-3 rounded border border-secondary mb-2")
                 ]),

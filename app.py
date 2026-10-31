@@ -60,7 +60,7 @@ def serve_layout():
     navbar = dbc.Navbar(
         id="navbar",
         color=None,
-        style={"marginBottom": "1rem"},
+        style={"marginBottom": "0.6rem"},
         children=html.Div(
             className="d-flex align-items-center w-100",
             children=[

@@ -27,7 +27,7 @@
             #_pages_content {
                 height: 100%;
                 width: 100%;
-                padding: 6rem 8rem 2rem 10rem;
+                padding: 5.5rem 7rem 1.75rem 9.25rem;
 
                 background-color: #11171D;
                 border-radius: .5rem 0 0 0;
@@ -100,16 +100,23 @@
     .navbar-cta {
         font-size: 0.78rem;
         border-radius: 5px;
-        background-color: rgba(255, 193, 7, 0.12);
-        border: 1px solid rgba(255, 193, 7, 0.35);
+        color: #5eead4;
+        background-color: rgba(45, 212, 191, 0.12);
+        border: 1px solid rgba(45, 212, 191, 0.4);
         padding: 0.35rem 0.85rem;
         transition: all 0.2s ease-in-out;
         cursor: pointer;
 
+        i {
+            --bs-text-opacity: 1;
+            color: inherit;
+        }
+
         &:hover {
-            background-color: rgba(255, 193, 7, 0.22) !important;
-            border-color: rgba(255, 193, 7, 0.55) !important;
-            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+            color: #99f6e4 !important;
+            background-color: rgba(45, 212, 191, 0.22) !important;
+            border-color: rgba(45, 212, 191, 0.6) !important;
+            box-shadow: 0 2px 8px rgba(45, 212, 191, 0.18);
         }
     }
 
@@ -148,17 +155,230 @@
 
     overflow: hidden;
 
+    .observer-chrome {
+        background: #2b263a;
+        border: 1px solid #37334a;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .observer-view-bar {
+        position: relative;
+        flex-grow: 0;
+        width: max-content;
+        padding: 0.55rem 0.7rem;
+        align-items: center;
+        overflow: visible;
+    }
+
+    .observer-chrome-label {
+        z-index: 0;
+        cursor: default;
+        position: absolute;
+        top: -7px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        width: fit-content;
+        background: #2b263a;
+        line-height: 1;
+        font-size: 0.62rem;
+        letter-spacing: 0.03em;
+    }
+
+    .observer-view-bar-divider {
+        align-self: stretch;
+        width: 1px;
+        margin: 4px 6px 4px 8px;
+        background: #37334a;
+    }
+
+    .observer-view-bar > .btn {
+        padding: 0.3rem 0.4rem;
+        line-height: 1;
+    }
+
+    .observer-view-bar > .btn i {
+        font-size: 1.15rem;
+    }
+
+    .view-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        z-index: 1;
+    }
+
+    .view-switcher {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: stretch;
+        padding: 3px;
+        background: #1b1824;
+        border: 1px solid #1d1a27;
+        border-radius: 8px;
+        isolation: isolate;
+    }
+
+    .view-switcher-slider {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: 3px;
+        width: calc((100% - 6px) / 3);
+        border-radius: 6px;
+        background: #7c3aed;
+        pointer-events: none;
+        z-index: 0;
+        transition: transform 0.22s ease, background-color 0.22s ease;
+    }
+
+    .view-switcher.view-topology .view-switcher-slider {
+        transform: translateX(0);
+        background: #7c3aed;
+    }
+
+    .view-switcher.view-projections .view-switcher-slider {
+        transform: translateX(100%);
+        background: #5b8fb8;
+    }
+
+    .view-switcher.view-components .view-switcher-slider {
+        transform: translateX(200%);
+        background: #e14b7a;
+    }
+
+    .components-selector {
+        align-items: center;
+        min-width: 200px;
+        max-width: 260px;
+        color: #1b1824;
+    }
+
+    .components-selector-dropdown,
+    #drp-component-idx {
+        min-width: 200px;
+        font-size: 0.8rem;
+        color: #1b1824;
+    }
+
+    #drp-component-idx [class*="-control"] {
+        background-color: #efece3 !important;
+        border-color: #4a445c !important;
+        min-height: 32px;
+        cursor: pointer;
+        box-shadow: none !important;
+    }
+
+    #drp-component-idx [class*="-singleValue"],
+    #drp-component-idx [class*="-placeholder"],
+    #drp-component-idx [class*="-input"],
+    #drp-component-idx [class*="-option"] {
+        color: #1b1824 !important;
+    }
+
+    .components-selector .Select-control {
+        background-color: #efece3;
+        border-color: #4a445c;
+        min-height: 32px;
+        cursor: pointer;
+    }
+
+    .components-selector .Select-value,
+    .components-selector .Select-value-label,
+    .components-selector .Select-placeholder {
+        color: #1b1824 !important;
+    }
+
+    .components-selector .Select-menu-outer {
+        color: #1b1824;
+        z-index: 20;
+    }
+
+    .view-switcher .btn {
+        position: relative;
+        z-index: 1;
+        background: transparent !important;
+        color: #8b849c;
+        white-space: nowrap;
+        justify-content: center;
+        border-radius: 6px;
+        box-shadow: none !important;
+        transition: color 0.15s ease;
+        font-size: 0.85rem;
+        line-height: 1.2;
+        padding: 0.4rem 0.85rem;
+    }
+
+    .view-switcher .btn i {
+        font-size: 1.15rem;
+    }
+
+    .view-switcher .btn:hover {
+        color: #d6d2e0;
+    }
+
+    .view-switcher.view-topology #btn-view-topology,
+    .view-switcher.view-projections #btn-view-projections,
+    .view-switcher.view-components #btn-view-components {
+        color: #fff;
+    }
+
     #observer-toolbar {
         height: 100%;
         width: fit-content;
-        background: #2b263a;
         box-sizing: border-box;
-        padding: 10px;
+        padding: 8px;
 
         .btn {
-            font-size: 20px;
-            padding: 0;
+            font-size: 17px;
+            padding: 0.15rem;
+            line-height: 1;
         }
+    }
+
+    .observer-plot-container {
+        display: flex;
+        flex: 1 1 0;
+        min-width: 0;
+        height: 100%;
+    }
+
+    .observer-plot-container > .dash-graph,
+    .observer-plot-container > .js-plotly-plot {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+    }
+
+    .observer-empty {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        color: #8b849c;
+        text-align: center;
+        user-select: none;
+    }
+
+    .observer-empty-icon {
+        font-size: 1.6rem;
+        opacity: 0.55;
+        margin-bottom: 0.15rem;
+    }
+
+    .observer-empty-title {
+        color: #c9c4d4;
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .observer-empty-hint {
+        font-size: 0.8rem;
+        color: #6f6980;
+        max-width: 22rem;
     }
 
     #observer-table-container {

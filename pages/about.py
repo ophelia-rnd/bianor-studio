@@ -14,7 +14,7 @@ def layout():
             html.Div(
                 className="p-4 rounded border border-secondary bg-dark shadow-sm",
                 children=[
-                    html.H4(registry.edition_name, className="text-info mb-3"),
+                    html.H4(registry.edition_name, className="text-primary mb-3"),
                     html.P([
                         html.Strong("Version: "), registry.version() if callable(registry.version) else registry.version
                     ]),
