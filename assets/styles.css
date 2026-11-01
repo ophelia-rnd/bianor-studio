@@ -98,14 +98,17 @@
     }
 
     .navbar-cta {
-        font-size: 0.78rem;
+        font-size: 0.85rem;
         border-radius: 5px;
         color: #5eead4;
         background-color: rgba(45, 212, 191, 0.12);
         border: 1px solid rgba(45, 212, 191, 0.4);
-        padding: 0.35rem 0.85rem;
+        padding: 0.35rem 0.6rem;
         transition: all 0.2s ease-in-out;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
 
         i {
             --bs-text-opacity: 1;
@@ -120,21 +123,65 @@
         }
     }
 
-    .navbar-doc-btn {
+    .navbar-mission-btn {
         font-size: 0.78rem;
         border-radius: 5px;
-        background-color: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #d8d8d8;
+        background-color: rgb(29, 29, 29);
+        border: 1px solid rgba(255, 255, 255, 0.35);
         padding: 0.35rem 0.85rem;
-        color: #adb5bd;
         transition: all 0.2s ease-in-out;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+
+        i {
+            --bs-text-opacity: 1;
+            color: inherit;
+        }
 
         &:hover {
-            background-color: rgba(255, 255, 255, 0.12) !important;
-            border-color: rgba(255, 255, 255, 0.25) !important;
-            color: #f8f9fa !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            color: #f3e8ff !important;
+            background-color: rgba(168, 85, 247, 0.22) !important;
+            border-color: rgba(168, 85, 247, 0.6) !important;
+            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.25);
+
+            i {
+                --bs-text-opacity: 1;
+            }
+        }
+    }
+
+    .navbar-icon-btn,
+    .navbar-doc-btn {
+        font-size: 0.85rem;
+        border-radius: 5px;
+        color: #e2e8f0;
+        background-color: rgba(255, 255, 255, 0.10);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        padding: 0.35rem 0.6rem;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+
+        i {
+            --bs-text-opacity: 1;
+            color: inherit;
+        }
+
+        &:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.18) !important;
+            border-color: rgba(255, 255, 255, 0.45) !important;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.12);
+
+            i {
+                --bs-text-opacity: 1;
+            }
         }
     }
 }

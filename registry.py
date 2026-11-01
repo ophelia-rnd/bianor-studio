@@ -9,13 +9,10 @@ class AppRegistry:
         self.edition_badge_func = lambda: dbc.Badge("COMMUNITY", color=None, className="shadow-sm", style={"color": "#a855f7", "padding": "0", "fontSize": ".45rem", "fontWeight": "bold", "letterSpacing": ".5px"})
         
         self.navbar_cta = lambda: dbc.Button(
-            [
-                html.I(className="bi bi-lightning-charge-fill"),
-                html.Span("Contact the Team for More", className="fw-semibold ms-1"),
-            ],
+            html.I(className="bi bi-cup-hot"),
             id={"type": "open-premium-modal", "index": "navbar"},
             n_clicks=0,
-            className="me-2 d-flex align-items-center text-decoration-none navbar-cta",
+            className="d-flex align-items-center justify-content-center text-decoration-none navbar-cta",
             color=None,
             size="sm",
         )

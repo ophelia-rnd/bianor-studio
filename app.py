@@ -118,16 +118,43 @@ def serve_layout():
                                 )
                             ]
                         ),
-                        html.A(
-                            [
-                                html.I(className="bi bi-book me-1"),
-                                html.Span("Documentation", className="ms-1"),
+                        html.Div(
+                            className="ms-auto me-2 d-flex align-items-center gap-2",
+                            children=[
+                                html.A(
+                                    [
+                                        html.Span("Learn More about Bianor", className="ms-1"),
+                                    ],
+                                    id="navbar-mission-btn",
+                                    href="https://bianor.ophelia-rnd.dev",
+                                    target="_blank",
+                                    className="navbar-mission-btn",
+                                ),
+                                dbc.Tooltip(
+                                    "Our mission, recent work, and what's next",
+                                    target="navbar-mission-btn",
+                                    placement="bottom",
+                                ),
+                                html.A(
+                                    html.I(className="bi bi-book"),
+                                    id="navbar-doc-btn",
+                                    href="https://bianor-documentation.onrender.com",
+                                    target="_blank",
+                                    className="navbar-icon-btn",
+                                ),
+                                dbc.Tooltip(
+                                    "Documentation",
+                                    target="navbar-doc-btn",
+                                    placement="bottom",
+                                ),
+                                registry.navbar_cta(),
+                                dbc.Tooltip(
+                                    "Contact the Team",
+                                    target={"type": "open-premium-modal", "index": "navbar"},
+                                    placement="bottom",
+                                ),
                             ],
-                            href="https://bianor-documentation.onrender.com",
-                            target="_blank",
-                            className="ms-auto me-2 d-flex align-items-center text-decoration-none navbar-doc-btn",
                         ),
-                        registry.navbar_cta()
                     ]
                 )
             ]
