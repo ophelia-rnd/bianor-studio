@@ -26,14 +26,14 @@ DEMO_MAP_SIZE_OPTIONS = [
 DEMO_DEFAULT_MAP_SIZE = 1.0
 
 DEMO_MARKER_STYLES = [
-    {"symbol": "circle", "color": "#f43f5e", "size": 10},
-    {"symbol": "diamond", "color": "#38bdf8", "size": 10},
-    {"symbol": "square", "color": "#34d399", "size": 10},
-    {"symbol": "cross", "color": "#fbbf24", "size": 11},
-    {"symbol": "triangle-up", "color": "#a855f7", "size": 10},
-    {"symbol": "star", "color": "#f472b6", "size": 11},
-    {"symbol": "hexagon", "color": "#2dd4bf", "size": 10},
-    {"symbol": "hourglass", "color": "#a3e635", "size": 10},
-    {"symbol": "bowtie", "color": "#fb923c", "size": 11},
-    {"symbol": "x", "color": "#e879f9", "size": 11},
+    {"symbol": "circle", "color": "#ffffff", "size": 11, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "diamond", "color": "#38bdf8", "size": 11, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "square", "color": "#34d399", "size": 11, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "cross", "color": "#fde047", "size": 12, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "triangle-up", "color": "#3b82f6", "size": 11, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "star", "color": "#e9d5ff", "size": 12, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "hexagon", "color": "#00f5d4", "size": 11, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "hourglass", "color": "#a3e635", "size": 11, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "bowtie", "color": "#fed7aa", "size": 12, "line": {"width": 1.2, "color": "#000000"}},
+    {"symbol": "x", "color": "#818cf8", "size": 12, "line": {"width": 1.2, "color": "#000000"}},
 ]
