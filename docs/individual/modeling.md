@@ -1,4 +1,4 @@
-# Community Edition &mdash; Modeling & Configuration
+# Studio &mdash; Modeling & Configuration
 
 ## Overview
 

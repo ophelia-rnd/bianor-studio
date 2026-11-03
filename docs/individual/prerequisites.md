@@ -1,4 +1,4 @@
-# Community Edition &mdash; Prerequisites
+# Studio &mdash; Prerequisites
 
 Choose the path that best fits your needs:
 

@@ -5,8 +5,8 @@ from version import __version__
 class AppRegistry:
     def __init__(self, version=__version__):
         self.version = version
-        self.edition_name = "Community Edition"
-        self.edition_badge_func = lambda: dbc.Badge("COMMUNITY", color=None, className="shadow-sm", style={"color": "#a855f7", "padding": "0", "fontSize": ".45rem", "fontWeight": "bold", "letterSpacing": ".5px"})
+        self.edition_name = "Studio"
+        self.edition_badge_func = lambda: dbc.Badge("STUDIO", color=None, className="shadow-sm", style={"color": "#94a3b8", "backgroundColor": "rgba(148, 163, 184, 0.12)", "padding": ".15rem .5rem", "fontSize": ".42rem", "fontWeight": "600", "letterSpacing": "1px", "borderRadius": "4px"})
         
         self.navbar_cta = lambda: dbc.Button(
             html.I(className="bi bi-cup-hot"),
@@ -17,14 +17,7 @@ class AppRegistry:
             size="sm",
         )
         
-        self.about_page_callout = lambda: html.Div([
-            html.I(className="bi bi-lock-fill me-2", style={"color": "#5eead4"}),
-            html.Span("Using Community Edition. ", className="text-white-50"),
-            dbc.Button([
-                "Contact the Team"
-            ], id={"type": "open-premium-modal", "index": "about"}, n_clicks=0, color="link", className="text-decoration-none fw-bold p-0 align-baseline", style={"cursor": "pointer", "color": "#5eead4"}),
-            html.Span(" to unlock advanced features.", className="text-white-50")
-        ], className="mt-3 mb-4 p-3 small rounded", style={"backgroundColor": "rgba(45, 212, 191, 0.1)", "border": "1px solid rgba(45, 212, 191, 0.3)"})
+        self.about_page_callout = lambda: None
 
         self.premium_modal = lambda: dbc.Modal(
             id="mdl-premium",

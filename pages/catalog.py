@@ -20,14 +20,18 @@ def create_datatable(elem_id:str):
         id=elem_id,
         style_as_list_view=True,
         style_header={
-            'backgroundColor': '#2b263a',
+            'backgroundColor': '#1e232c',
+            'color': '#FFFFFF',
+            'fontWeight': '600',
             'border': 'none',
+            'borderBottom': '1px solid #3d4756',
             'padding': '1rem .75rem',
         },
         style_cell={
-            'background': 'none',
-            'color': 'white',
+            'background': 'transparent',
+            'color': '#F1F5F9',
             'border': 'none',
+            'borderBottom': '1px solid #2b323e',
             'padding': '.75rem',
             'fontSize': '.8rem',
             'textAlign': 'left',
@@ -44,8 +48,21 @@ def create_datatable(elem_id:str):
                 'box-sizing': 'border-box'
             }
         ],
+        style_data_conditional=[
+            {
+                'if': {'row_index': 'odd'},
+                'backgroundColor': '#222731',
+            },
+            {
+                'if': {'row_index': 'even'},
+                'backgroundColor': '#282e39',
+            },
+        ],
         style_table={
-            'backgroundColor': '#332e49',
+            'backgroundColor': '#282e39',
+            'border': '1px solid #3d4756',
+            'borderRadius': '8px',
+            'overflow': 'hidden',
             'cursor': 'default'
         },
         row_selectable=False, column_selectable=False, cell_selectable=False, tooltip_delay=0, tooltip_duration=None,
