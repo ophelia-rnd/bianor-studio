@@ -220,7 +220,23 @@ layout = lambda: html.Div(
                     id='observer-table-container',
                     style={"display": "none"},
                     children=[
-                        html.H6(id="observer-table-title", children="Detections", className="mb-3 text-white fw-semibold"),
+                        html.Div(
+                            className="d-flex align-items-center justify-content-between mb-2",
+                            children=[
+                                html.Span(
+                                    id="observer-table-title",
+                                    children="Points of Interest",
+                                    className="text-white-50 fw-semibold text-uppercase",
+                                    style={
+                                        "fontSize": "0.75rem",
+                                        "letterSpacing": "0.06em",
+                                        "whiteSpace": "nowrap",
+                                        "overflow": "hidden",
+                                        "textOverflow": "ellipsis",
+                                    },
+                                ),
+                            ],
+                        ),
                         dag.AgGrid(
                             id="observer-table",
                             rowData=[],
@@ -232,14 +248,14 @@ layout = lambda: html.Div(
                                 "rowSelection": "multiple",
                                 "suppressRowClickSelection": False,
                                 "animateRows": True,
-                                "headerHeight": 44,
-                                "rowHeight": 40,
+                                "headerHeight": 32,
+                                "rowHeight": 30,
                             },
                             defaultColDef={
                                 "sortable": True,
                                 "filter": True,
                                 "resizable": True,
-                                "minWidth": 130,
+                                "minWidth": 120,
                                 "flex": 1,
                                 "cellStyle": {"color": "#F1F5F9"},
                             },
@@ -655,14 +671,15 @@ def __reset_selected_rows(selected_map, selected_prediction):
 )
 def __toggle_table_container(selected_prediction):
     if not selected_prediction:
-        return {"display": "none"}, "Detections"
+        return {"display": "none"}, "Points of Interest"
     pred_name = selected_prediction.get("NAME", "")
-    title = f"Detections: {pred_name}" if pred_name else "Detections"
+    title = f"Points of Interest: {pred_name}" if pred_name else "Points of Interest"
     return {
         "display": "flex",
         "flexDirection": "column",
-        "flex": "0 0 520px",
-        "minWidth": "460px",
-        "maxWidth": "650px",
+        "flex": "0 0 480px",
+        "minWidth": "380px",
+        "maxWidth": "380px",
         "height": "100%",
+        "paddingTop": "0.65rem",
     }, title

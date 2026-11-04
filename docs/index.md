@@ -44,7 +44,7 @@ flowchart TD
 
 <div class="grid cards" markdown>
 
--   :material-account-school:{ .lg .middle } __Community Edition__
+-   :material-view-dashboard:{ .lg .middle } __Studio__
 
     ---
 
@@ -56,7 +56,7 @@ flowchart TD
     * [Launch Bianor](individual/launch.md)
     * [Modeling & Configuration](individual/modeling.md)
 
--   :material-domain:{ .lg .middle } __Biome Edition__
+-   :material-domain:{ .lg .middle } __Biome__
 
     ---
 

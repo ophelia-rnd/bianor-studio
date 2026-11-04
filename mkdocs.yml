@@ -74,7 +74,7 @@ nav:
   - Home:
       - Overview: index.md
       - Quick Start: quickstart.md
-  - "Community Edition":
+  - "Studio":
       - Core Features: features.md
       - Prerequisites: individual/prerequisites.md
       - Launch Bianor: individual/launch.md

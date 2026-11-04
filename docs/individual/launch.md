@@ -1,4 +1,4 @@
-# Community Edition &mdash; Launch Bianor
+# Studio &mdash; Launch Bianor
 
 Choose your deployment mode to configure and launch Bianor.
 

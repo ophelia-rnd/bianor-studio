@@ -179,7 +179,7 @@ def serve_layout():
                 n_clicks=0,
                 color=None,
                 size="sm",
-                children=[html.I(className="bi bi-magic fs-5 me-1", style={"color": "#d946ef"}), "Quick Demo"],
+                children=[html.I(className="bi bi-magic fs-5 me-1", style={"color": "#5eead4"}), "Quick Demo"],
             ),
             dbc.Modal(
                 id="mdl-create",
