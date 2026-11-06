@@ -4,8 +4,8 @@ site_author: Máté Balogh
 site_url: https://bianor.ophelia-rnd.dev
 copyright: "&copy; 2026 Bianor"
 
-repo_name: ophelia-rnd/bianor
-repo_url: https://github.com/ophelia-rnd/bianor
+repo_name: ophelia-rnd/bianor-studio
+repo_url: https://github.com/ophelia-rnd/bianor-studio
 
 theme:
   name: material

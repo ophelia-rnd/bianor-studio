@@ -234,7 +234,7 @@ flowchart TD
 === ":material-laptop: Local Run"
 
     !!! tip "Quick Start Tip"
-        Instead of stepping through the guide below, you can run [`bianor_local_catalog/notebooks/demo_iris.ipynb`](https://github.com/ophelia-rnd/bianor/blob/main/bianor_local_catalog/notebooks/demo_iris.ipynb) to train, save, and register a demo Iris representation model and sample dataset in one go.
+        Instead of stepping through the guide below, you can run [`bianor_local_catalog/notebooks/demo_iris.ipynb`](https://github.com/ophelia-rnd/bianor-studio/blob/main/bianor_local_catalog/notebooks/demo_iris.ipynb) to train, save, and register a demo Iris representation model and sample dataset in one go.
 
     ### 1. Modeling
 
