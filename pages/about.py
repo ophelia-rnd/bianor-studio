@@ -58,7 +58,7 @@ def layout():
                                 children=[
                                     html.A(
                                         [html.I(className="bi bi-github me-1"), "GitHub"],
-                                        href="https://github.com/ophelia-rnd/bianor",
+                                        href="https://github.com/ophelia-rnd/bianor-studio",
                                         target="_blank",
                                         className="text-decoration-none small",
                                         style={"color": "#94a3b8", "fontSize": ".75rem"},
