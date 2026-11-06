@@ -1,37 +1,23 @@
 # Quick Start
 
-## Clone the Repository
+## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/ophelia-rnd/bianor.git
-cd bianor
+git clone https://github.com/ophelia-rnd/bianor-studio.git
+cd bianor-studio
 ```
 
----
-
-## Option A: Running with Docker
-
-```bash
-docker compose up --build
-```
-
-Navigate to `http://localhost:8050`.
-
----
-
-## Option B: Local Python Environment
-
-### 1. Install Dependencies
+## 2. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Prepare the Demo Setup
+## 3. Prepare the Demo Setup
 
-The repository comes with a notebook that sets up local data and a representation model for the Iris dataset, along with a configured `catalog.yaml` manifest. Execute all cells in [`bianor_local_catalog/notebooks/demo_iris.ipynb`](https://github.com/ophelia-rnd/bianor/blob/main/bianor_local_catalog/notebooks/demo_iris.ipynb).
+The repository comes with a notebook that sets up local data and a representation model for the Iris dataset, along with a configured `catalog.yaml` manifest. Execute all cells in [`bianor_local_catalog/notebooks/demo_iris.ipynb`](https://github.com/ophelia-rnd/bianor-studio/blob/main/bianor_local_catalog/notebooks/demo_iris.ipynb).
 
-### 3. Launch Bianor
+## 4. Launch Bianor
 
 Start the application and navigate to `http://localhost:8050`.
 

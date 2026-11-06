@@ -56,7 +56,7 @@ flowchart TD
     * [Launch Bianor](individual/launch.md)
     * [Modeling & Configuration](individual/modeling.md)
 
--   :material-domain:{ .lg .middle } __Biome__
+-   :material-domain:{ .lg .middle } __Biome Edition__
 
     ---
 

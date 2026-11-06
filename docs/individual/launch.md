@@ -9,7 +9,7 @@ Choose your deployment mode to configure and launch Bianor.
     ### 1. Clone repository into Workspace
     In Databricks, navigate to **Workspace** and create a new **Git folder** using the following repository:
     ```text
-    https://github.com/ophelia-rnd/bianor.git
+    https://github.com/ophelia-rnd/bianor-studio.git
     ```
 
     ### 2. Configure `app.yaml`
@@ -60,12 +60,12 @@ Choose your deployment mode to configure and launch Bianor.
 
     ### 1. Clone repository
     ```bash
-    git clone https://github.com/ophelia-rnd/bianor.git
+    git clone https://github.com/ophelia-rnd/bianor-studio.git
     ```
 
     ### 2. Install dependencies
     ```bash
-    cd bianor
+    cd bianor-studio
     pip install -r requirements.txt
     ```
 
