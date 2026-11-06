@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/bianor_branding_dark.png">
-    <img alt="Bianor" src="assets/bianor_branding_light.png" width=45%>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/bianor_studio_branding_dark.png">
+    <img alt="Bianor" src="assets/bianor_studio_branding_light.png" width=45%>
   </picture>
 </p>
 
@@ -21,7 +21,7 @@ ______________________________________________________________________
 
 ## About
 
-**Bianor** is an **interactive app** for exploring and contextualizing high-dimensional data via Self-Organizing Map (SOM) representations.
+**Bianor Studio** is an **interactive app** for exploring and contextualizing high-dimensional data via Self-Organizing Map (SOM) representations.
 
 ## Getting Started
 
