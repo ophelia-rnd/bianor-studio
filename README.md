@@ -21,7 +21,7 @@ ______________________________________________________________________
 
 ## About
 
-**Bianor Studio** is an **interactive app** for exploring and contextualizing high-dimensional data via Self-Organizing Map (SOM) representations.
+**Bianor Studio** is an interactive app for exploring and contextualizing high-dimensional data via Self-Organizing Map (SOM) representations.
 
 ## Getting Started
 
@@ -50,7 +50,7 @@ cp .env.local.example .env
 
 The repository comes with a notebook that sets up local data and a representation model for the Iris dataset, along with a configured `catalog.yaml` manifest. Execute all cells in [`bianor_local_catalog/notebooks/demo_iris.ipynb`](https://github.com/ophelia-rnd/bianor-studio/blob/main/bianor_local_catalog/notebooks/demo_iris.ipynb).
 
-### 5. Launch Bianor
+### 5. Launch Bianor Studio
 
 Start the application and navigate to `http://localhost:8050`.
 
@@ -58,12 +58,13 @@ Start the application and navigate to `http://localhost:8050`.
 python app.py
 ```
 
-### 6. Explore Bianor
+### 6. Explore Bianor Studio
 
-1. **Select a Representation**: Choose *Iris Representation* from the top navigation selector.
-2. **Inspect Topology**: Toggle between `Neighbor Distances`, `Training Activations`, and `Topological Connections` to inspect cluster structure and node density in 2D.
-3. **Analyze Components**: Use the `Component View` to visualize individual feature distributions across the map.
-4. **Overlay Projections & Predictions**: Display labeled historical samples and ground-truth classification of holdout observations.
+Choose a representation from the selector and open the Explorer page.
+
+- **Inspect the Data Landscape**: Toggle between `Neighbor Distances`, `Training Activations`, and `Topological Connections` to inspect cluster structure and node density in 2D.
+- **Analyze Components**: Toggle the `Components` view to visualize individual feature distributions across the map.
+- **Overlay Projections & Predictions**: Display labeled historical samples and points of interest with a style based on ground truth, prediction, or other chosen target information.
 
 > [!TIP]
 > To learn more, refer to the [Documentation](https://bianor-documentation.onrender.com).
@@ -77,8 +78,8 @@ The Apache 2.0 license grants permissions for the source code, but does not gran
 ## Contact
 
 For questions, feedback, or enterprise inquiries:
-- **Partnerships:** Reach out at [hello@ophelia-rnd.dev](mailto:hello@ophelia-rnd.dev)
-- **Issues & Feature Requests:** Open an issue [here](https://github.com/ophelia-rnd/bianor-studio/issues)
+- Reach out at [hello@ophelia-rnd.dev](mailto:hello@ophelia-rnd.dev)
+- Open an issue [here](https://github.com/ophelia-rnd/bianor-studio/issues)
 - Learn more about the [Team and Mission](https://bianor.ophelia-rnd.dev) behind Bianor or connect on [LinkedIn](https://www.linkedin.com/company/bianor-insights)
 
 
