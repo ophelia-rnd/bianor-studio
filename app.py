@@ -411,10 +411,18 @@ def __update_drp_prediction_options(selected_map_id, current_style):
 
 @app.callback(
     Output("selected_map", "data"),
+    Output("_pages_location", "pathname", allow_duplicate=True),
     Input("drp-map", "value"),
+    State("_pages_location", "pathname"),
+    prevent_initial_call=True,
 )
-def __store_selected_map(selected_map_id):
-    return get_map_by_id(selected_map_id)
+def __store_selected_map(selected_map_id, pathname):
+    selected = get_map_by_id(selected_map_id)
+    if not selected:
+        return None, dash.no_update
+    if pathname == "/explorer":
+        return selected, dash.no_update
+    return selected, "/explorer"
 
 
 @app.callback(
